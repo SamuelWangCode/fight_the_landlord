@@ -1,11 +1,11 @@
 // 该页面存放所有或大部分页面共有的内容
 <template>
   <div id="app">
-    <Header>ac</Header>
-    <Content>
+    <Header style="height:10ex; margin-bottom:5ex;">header</Header>
+    <Content style="height:75ex;">
       <router-view/>
     </Content>
-    <Footer>ac</Footer>
+    <Footer style="height:10ex;">footer</Footer>
   </div>
 </template>
 
