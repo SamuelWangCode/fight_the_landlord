@@ -7,6 +7,7 @@ import axios from 'axios'
 axios.defaults.withCredentials = true;
 import VueAxios from 'vue-axios'
 import ViewUI from 'view-design'
+import store from './store'
 import 'view-design/dist/styles/iview.css';
 
 Vue.config.productionTip = false
@@ -31,6 +32,7 @@ router.afterEach(route => {
 /* eslint-disable no-new */
 new Vue({
   el: '#app',
+  store,
   router,
   components: { App },
   template: '<App/>'

@@ -1,6 +1,11 @@
+// 该页面存放所有或大部分页面共有的内容
 <template>
   <div id="app">
-    <router-view/>
+    <Header>ac</Header>
+    <Content>
+      <router-view/>
+    </Content>
+    <Footer>ac</Footer>
   </div>
 </template>
 
@@ -17,6 +22,5 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  margin-top: 60px;
 }
 </style>
