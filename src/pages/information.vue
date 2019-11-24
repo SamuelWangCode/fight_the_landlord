@@ -241,7 +241,7 @@ export default {
 // css代码
 <style scoped>
 .informationContainer{
-    margin-top:5%;
+    margin-top:2%;
 }
 .formList{
     width:50%;
