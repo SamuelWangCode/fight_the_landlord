@@ -4,7 +4,6 @@ import Login from '@/pages/login'
 import Register from '@/pages/register'
 import Hall from '@/pages/hall'
 import Information from '@/pages/information'
-import ReadyRoom from '@/pages/readyRoom'
 import GameRoom from '@/pages/gameRoom'
 
 Vue.use(Router)
@@ -32,11 +31,6 @@ export default new Router({
       path: '/information',
       name: 'Information',
       component: Information
-    },
-    {
-      path: '/readyRoom',
-      name: 'ReadyRoom',
-      component: ReadyRoom
     },
     {
       path: '/gameRoom',
