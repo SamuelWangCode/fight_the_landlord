@@ -73,6 +73,7 @@ export default {
 // css代码
 <style scoped>
     .formList{
+        margin-top:10%;
         margin-left: auto;
         margin-right: auto;
         width: 30em;

@@ -4,15 +4,16 @@
         <div class="leftContainer">
             <List header="房间列表" border>
                 <ListItem v-for="room in allRoom" :key="room.index">
-                    <p style="margin-left:auto;margin-right:auto;">房间号：{{room.roomNumber}}，成员：{{room.id1}},{{room.id2}},{{room.id3}} <Button type="primary">加入</Button></p>
+                    <p style="margin-left:auto;margin-right:auto;">roomNumber：{{room.roomNumber}}，Members：{{room.id1}},{{room.id2}},{{room.id3}} <Button type="primary">加入</Button></p>
                 </ListItem>
             </List>
         </div>
         <div class="rightContainer">
             <List split="false" size="large">
-                <ListItem><Button style="primer">创建房间</Button></ListItem>
-                <ListItem><Button style="primer">加入房间</Button></ListItem>
-                <ListItem><Button style="primer">自动匹配</Button></ListItem>
+                <ListItem><Button style="primer">create room</Button></ListItem>
+                <ListItem><Button style="primer">join room</Button></ListItem>
+                <ListItem><Button style="primer">automatic matching</Button></ListItem>
+                <ListItem><Button style="primer" to="information">self information</Button></ListItem>
             </List>
         </div>
     </div>
@@ -38,10 +39,12 @@ export default {
 // css代码
 <style scoped>
 .leftContainer{
+    margin-top:5%;
     float: left;
     width: 60em;
 }
 .rightContainer{
+    margin-top:5%;
     float: right;
     width: 30em;
 }
