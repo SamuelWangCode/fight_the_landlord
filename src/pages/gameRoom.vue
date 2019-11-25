@@ -20,6 +20,12 @@
         </div>
         <div class="centerContainer">
             <div class="topContainer">
+                <div class="dipai">
+                    当前底牌：234
+                </div>
+                <div class="midScore">
+                    192
+                </div>
             </div>
             <div class="bottomContainer">
             </div>
@@ -69,10 +75,12 @@ export default {
     height: 100%;
 }
 .topContainer{
-    height: 40%;
+    height: 50%;
+    border-style: solid;
 }
 .bottomContainer{
-    height: 40%;
+    height: 50%;
+    border-style: solid;
 }
 .rightContainer{
     width: 25%;
@@ -100,7 +108,23 @@ export default {
 
 }
 .score{
-
     margin-bottom: 25%;
+}
+.dipai{
+    border-style: solid;
+    width: 50%;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 10%;
+    margin-bottom: 10%;
+}
+.midScore{
+    width: 30%;
+    font-weight: bold;
+    font-size: 30px; 
+    border-style: solid;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 5%;
 }
 </style>

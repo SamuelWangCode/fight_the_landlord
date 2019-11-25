@@ -3,17 +3,17 @@
 <div class="formList">
   <Form ref="formInline" :model="formInline" :rules="ruleInline">
     <FormItem prop="user">
-      <Input type="text" v-model="formInline.user" placeholder="Username">
+      <Input type="text" v-model="formInline.user" placeholder="Username" maxlength="10">
         <Icon type="ios-person-outline" slot="prepend"></Icon>
       </Input>
     </FormItem>
     <FormItem prop="password">
-      <Input type="password" v-model="formInline.password" placeholder="Password">
+      <Input type="password" v-model="formInline.password" placeholder="Password" maxlength="20">
         <Icon type="ios-lock-outline" slot="prepend"></Icon>
       </Input>
     </FormItem>
     <FormItem prop="confirmPassword">
-      <Input type="password" v-model="formInline.confirmPassword" placeholder="confirmPassword">
+      <Input type="password" v-model="formInline.confirmPassword" placeholder="confirmPassword" maxlength="20">
         <Icon type="ios-lock-outline" slot="prepend"></Icon>
       </Input>
     </FormItem>

@@ -6,46 +6,49 @@
             </List>
             <Tabs value="name1">
                 <TabPane label="basic information" name="name1">
-                    <Form :model="basicForm" label-position="left" :label-width="150" disabled>
+                    <Form :model="basicForm" label-position="left" :label-width="150">
                         <FormItem label="user name">
-                            <Input v-model="basicForm.input1"></Input>
+                            <Input v-model="basicForm.input1" readonly</Input>
                         </FormItem>
                         <FormItem label="score">
-                            <Input v-model="basicForm.input2"></Input>
+                            <Input v-model="basicForm.input2" readonly></Input>
                         </FormItem>
                         <FormItem label="game number">
-                            <Input v-model="basicForm.input3"></Input>
+                            <Input v-model="basicForm.input3" readonly></Input>
                         </FormItem>
                         <FormItem label="win rate">
-                            <Input v-model="basicForm.input4"></Input>
+                            <Input v-model="basicForm.input4" readonly></Input>
                         </FormItem>
                     </Form>
                 </TabPane>
                 <TabPane label="details" name="name2">
-                    <Form :model="detailForm" label-position="left" :label-width="150" disabled>
+                    <Form :model="detailForm" label-position="left" :label-width="150">
                         <FormItem label="win number">
-                            <Input v-model="detailForm.input1"></Input>
+                            <Input v-model="detailForm.input1" readonly></Input>
                         </FormItem>
                         <FormItem label="lose number">
-                            <Input v-model="detailForm.input2"></Input>
+                            <Input v-model="detailForm.input2" readonly></Input>
                         </FormItem>
                         <FormItem label="peasant number">
-                            <Input v-model="detailForm.input3"></Input>
+                            <Input v-model="detailForm.input3" readonly></Input>
                         </FormItem>
                         <FormItem label="lord number">
-                            <Input v-model="detailForm.input4"></Input>
+                            <Input v-model="detailForm.input4" readonly></Input>
                         </FormItem>
                         <FormItem label="peasant win rate">
-                            <Input v-model="detailForm.input5"></Input>
+                            <Input v-model="detailForm.input5" readonly></Input>
                         </FormItem>
                         <FormItem label="lord win rate">
-                            <Input v-model="detailForm.input6"></Input>
+                            <Input v-model="detailForm.input6" readonly></Input>
                         </FormItem>
                         <FormItem label="last game time">
-                            <Input v-model="detailForm.input7"></Input>
+                            <Input v-model="detailForm.input7" readonly></Input>
+                        </FormItem>
+                        <FormItem label="game record">
+                            <Button type="primary" @click="modal1 = true">show game record</Button>
                         </FormItem>
                     </Form>                  
-                    <Button type="primary" @click="modal1 = true">show game record</Button>
+                    
                     <Modal
                         v-model="modal1"
                         title="Game Record"
@@ -56,17 +59,17 @@
                 <TabPane label="change password" name="name3">
                     <Form ref="passwordForm" :model="passwordForm" :rules="rulePasswordForm">
                         <FormItem prop="oldPassword">
-                        <Input type="text" v-model="passwordForm.oldPassword" placeholder="old-password">
+                        <Input type="password" v-model="passwordForm.oldPassword" placeholder="old-password" maxlength="20">
                             <Icon type="ios-lock-outline" slot="prepend"></Icon>
                         </Input>
                         </FormItem>
                         <FormItem prop="password">
-                        <Input type="password" v-model="passwordForm.password" placeholder="new-password">
+                        <Input type="password" v-model="passwordForm.password" placeholder="new-password" maxlength="20">
                             <Icon type="ios-lock-outline" slot="prepend"></Icon>
                         </Input>
                         </FormItem>
                         <FormItem prop="confirmPassword">
-                        <Input type="password" v-model="passwordForm.confirmPassword" placeholder="confirm password">
+                        <Input type="password" v-model="passwordForm.confirmPassword" placeholder="confirm password" maxlength="20">
                             <Icon type="ios-lock-outline" slot="prepend"></Icon>
                         </Input>
                         </FormItem>
