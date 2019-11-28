@@ -60,13 +60,26 @@ export default {
     handleSubmit(name) {
       this.$refs[name].validate(valid => {
         if (valid) {
-          this.$Message.success("Success!");
+          var data = {
+            username:this.formInline.user,
+            password:this.formInline.password
+          }
+          this.login(data).then(Response=>{
+            console.log(Response)
+            if(Response.data.status=="success"){
+              this.$Message.success("Success");
+            }else if(Response.data.status=="fail"&&Response.data.error=="wrong password"){
+              this.$Message.error("Your username or password is wrong.");
+            }else{
+              this.$Message.error("Can't connect to server");
+            }
+          })
         } else {
-          this.$Message.error("Fail!");
+          this.$Message.error("Please enter your name and password.");
         }
       });
-    }
-  }
+    },
+  },
 };
 </script>
 
