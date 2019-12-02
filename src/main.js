@@ -67,7 +67,6 @@ function post(url, data){
   return axios({
     method: "POST",
     url: "http://localhost:80/ChinesePoker_war/" + url,
-    // url: "http://47.100.79.111:8080/" + url,
     data: data,
   })
 }
@@ -84,4 +83,13 @@ Vue.prototype.login = function (data){
 }
 Vue.prototype.register = function (data){
   return post("login/register", data);
+}
+Vue.prototype.changePWD = function (data){
+  return post("login/changePWD", data);
+}
+Vue.prototype.getUserBasicInfo = function(data){
+  return post("userInfo/basic", data);
+}
+Vue.prototype.getUserDetailInfo = function(data){
+  return post("userInfo/detail", data);
 }

@@ -3,12 +3,12 @@
   <div class="formList">
     <Form ref="formInline" :model="formInline" :rules="ruleInline">
       <FormItem prop="user">
-        <Input type="text" v-model="formInline.user" placeholder="Username" maxlength="10">
+        <Input type="text" v-model="formInline.user" placeholder="Username" maxlength="10" @keyup.enter.native="handleSubmit('formInline')">
           <Icon type="ios-person-outline" slot="prepend"></Icon>
         </Input>
       </FormItem>
       <FormItem prop="password">
-        <Input type="password" v-model="formInline.password" placeholder="Password" maxlength="20">
+        <Input type="password" v-model="formInline.password" placeholder="Password" maxlength="20" @keyup.enter.native="handleSubmit('formInline')">
           <Icon type="ios-lock-outline" slot="prepend"></Icon>
         </Input>
       </FormItem>
@@ -18,6 +18,7 @@
           v-model="formInline.confirmPassword"
           placeholder="confirmPassword"
           maxlength="20"
+          @keyup.enter.native="handleSubmit('formInline')"
         >
           <Icon type="ios-lock-outline" slot="prepend"></Icon>
         </Input>
@@ -34,10 +35,12 @@
 
 // javaScript代码
 <script>
+import axios from "../api/axios"
 export default {
   name: "Login",
   data() {
     const validatePass = (rule, value, callback) => {
+      console.log("validatePass")
       if (value === "") {
         callback(new Error("Please enter your password"));
       } else {
@@ -49,6 +52,7 @@ export default {
       }
     };
     const validatePassCheck = (rule, value, callback) => {
+      console.log("validatePassCheck")
       if (value === "") {
         callback(new Error("Please enter your password again"));
       } else if (value !== this.formInline.password) {
@@ -98,27 +102,27 @@ export default {
     handleSubmit(name) {
       this.$refs[name].validate(valid => {
         if (valid) {
+          var data = {
+            username: this.formInline.user,
+            password: this.formInline.password
+          };
+          console.log(data);
+          axios.register(data).then(Response => {
+            if (Response.data.status == "success") {
+              this.$Message.success("Success!");
+              this.$router.push('/login')
+            } else if (
+              Response.data.status == "fail" &&
+              Response.data.error == "repetitive username"
+            ) {
+              this.$Message.error("Your name has been registered!");
+            } else {
+              this.$Message.error("Can't connect to server.");
+            }
+          });
         } else {
           this.$Message.error("Please enter required properties.");
           return;
-        }
-      });
-      console.log("函数仍在执行");
-      var data = {
-        username: this.formInline.user,
-        password: this.formInline.password
-      };
-      console.log(data);
-      this.register(data).then(Response => {
-        if (Response.data.status == "success") {
-          this.$Message.success("Success!");
-        } else if (
-          Response.data.status == "fail" &&
-          Response.data.error == "repetitive username"
-        ) {
-          this.$Message.error("Your name has been registered!");
-        } else {
-          this.$Message.error("Can't connect to server.");
         }
       });
     }

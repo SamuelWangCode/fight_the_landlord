@@ -3,12 +3,12 @@
 <div class="formList">
   <Form ref="formInline" :model="formInline" :rules="ruleInline">
     <FormItem prop="user">
-      <Input type="text" v-model="formInline.user" placeholder="Username" maxlength="10">
+      <Input type="text" v-model="formInline.user" placeholder="Username" maxlength="10" @keyup.enter.native="handleSubmit('formInline')">
         <Icon type="ios-person-outline" slot="prepend"></Icon>
       </Input>
     </FormItem>
     <FormItem prop="password">
-      <Input type="password" v-model="formInline.password" placeholder="Password" maxlength="20">
+      <Input type="password" v-model="formInline.password" placeholder="Password" maxlength="20" @keyup.enter.native="handleSubmit('formInline')">
         <Icon type="ios-lock-outline" slot="prepend"></Icon>
       </Input>
     </FormItem>
@@ -24,6 +24,8 @@
 
 // javaScript代码
 <script>
+import Cookie from "../api/cookie"
+import axios from "../api/axios"
 export default {
   name: "Login",
   data() {
@@ -64,10 +66,13 @@ export default {
             username:this.formInline.user,
             password:this.formInline.password
           }
-          this.login(data).then(Response=>{
+          axios.login(data).then(Response=>{
             console.log(Response)
             if(Response.data.status=="success"){
               this.$Message.success("Success");
+              Cookie.setCookie("userID",Response.data.id);
+              this.$store.commit("change",Response.data.id);
+              this.$router.push("/hall")
             }else if(Response.data.status=="fail"&&Response.data.error=="wrong password"){
               this.$Message.error("Your username or password is wrong.");
             }else{

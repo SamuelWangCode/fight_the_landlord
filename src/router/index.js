@@ -36,6 +36,6 @@ export default new Router({
       path: '/gameRoom',
       name: 'GameRoom',
       component: GameRoom
-    }
+    },
   ]
 })

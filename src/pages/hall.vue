@@ -9,7 +9,7 @@
             </List>
         </div>
         <div class="rightContainer">
-            <List split="false" size="large">
+            <List :split='false' size="large">
                 <ListItem><Button style="primer">create room</Button></ListItem>
                 <ListItem><Button style="primer">join room</Button></ListItem>
                 <ListItem><Button style="primer">automatic matching</Button></ListItem>
@@ -30,7 +30,8 @@ export default {
         { roomNumber: "13", id1: "bbb", id2: "bb", id3: "b" },
         { roomNumber: "14", id1: "ccc", id2: "cc", id3: "c" },
         { roomNumber: "15", id1: "ddd", id2: "dd", id3: "d" }
-      ]
+      ],
+      split: false
     };
   }
 };
