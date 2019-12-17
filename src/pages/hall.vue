@@ -10,8 +10,8 @@
         </div>
         <div class="rightContainer">
             <List :split='false' size="large">
-                <ListItem><Button style="primer">create room</Button></ListItem>
-                <ListItem><Button style="primer">join room</Button></ListItem>
+                <ListItem><Button style="primer" @click="createRoomHandler">create room</Button></ListItem>
+                <ListItem><Button style="primer" @click="enterRoomHandler">join room</Button></ListItem>
                 <ListItem><Button style="primer">automatic matching</Button></ListItem>
                 <ListItem><Button style="primer" to="information">self information</Button></ListItem>
             </List>
@@ -33,6 +33,51 @@ export default {
       ],
       split: false
     };
+  },
+  methods:{
+    createRoomHandler(){
+        var object = {
+            type: "createRoom",
+        }
+        this.socketApi.sendSock(object, this.getConfigResult)
+    },
+    enterRoomHandler(){
+        var object = {
+            type: "createRoom",
+            roomId: 1,
+        }
+        this.socketApi.sendSock(object, this.getConfigResult)
+    },
+    getConfigResult (res) {
+      // 接收回调函数返回数据的方法
+      console.log(res)
+      res = JSON.parse(res)
+      console.log(res.type)
+      if(res.type=="createRoom"){
+          console.log("创建房间")
+          if(res.status=="success"){
+              console.log("创建房间成功")
+              this.$Notice.success("Create Room Success!")
+              this.$router.push("/gameRoom")
+          }else if(res.status=="error"){
+              console.log("没创成功")
+              this.$Notice.error(res.cause)
+          }
+      }else if(res.type=="enterRoom"){
+          console.log("加入房间")
+          if(res.status=="success"){
+              console.log("加入房间成功")
+              this.$Notice.success("Enter Room Success!")
+              this.$router.push("/gameRoom")
+          }else if(res.status=="error"){
+              console.log("没加入成功")
+              this.$Notice.error(res.cause)
+          }
+      }
+    }
+  },
+  mounted(){
+      
   }
 };
 </script>

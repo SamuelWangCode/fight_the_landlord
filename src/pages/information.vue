@@ -101,12 +101,6 @@
 <script>
 import Cookie from "../api/cookie"
 import axios from "../api/axios"
-// var projectName="WSDemo_war";
-// var path="localhost:80/"+projectName;
-// var poker_websocket = new WebSocket("ws://" + path + "/ws");
-// poker_websocket.onmessage=function (ev) {
-//         alert("receive "+ev.data)
-//     }
 export default {
   name: "Information",
   data() {
