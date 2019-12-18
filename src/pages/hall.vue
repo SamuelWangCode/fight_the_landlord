@@ -88,6 +88,7 @@ export default {
     margin-top:5%;
     float: left;
     width: 60em;
+    color: #36292F;
 }
 .rightContainer{
     margin-top:5%;

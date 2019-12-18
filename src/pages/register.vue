@@ -36,6 +36,7 @@
 // javaScript代码
 <script>
 import axios from "../api/axios"
+import App from "../App"
 export default {
   name: "Login",
   data() {
