@@ -33,7 +33,7 @@ export default {
       joinRoomNumber: '',
       showModal:false,
       allRoom: [
-        // { roomNumber: "12", playerNumber: "1", joinButtonDisabled: false},
+        { roomNumber: '', playerNumber: '', joinButtonDisabled: false},
         // { roomNumber: "13", playerNumber: "1", joinButtonDisabled: false},
         // { roomNumber: "14", playerNumber: "1", joinButtonDisabled: false},
         // { roomNumber: "15", playerNumber: "1", joinButtonDisabled: false}
@@ -109,7 +109,11 @@ export default {
     }
   },
   mounted(){
-
+      var object = {
+          type: "enterRoom",
+          roomId: 10000,
+      }
+      this.socketApi.sendSock(object, this.getConfigResult)
   }
 };
 </script>
