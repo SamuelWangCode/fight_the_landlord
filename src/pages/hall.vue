@@ -3,8 +3,11 @@
     <div class="'container">
         <div class="leftContainer">
             <List header="房间列表" border>
-                <ListItem v-for="room in allRoom" :key="room.index">
-                    <p style="margin-left:auto;margin-right:auto;">roomId：{{room.roomNumber}}, playerNumber: {{room.playerNumber}}<Button type="primary" @click="enterRoomHandler(room.roomNumber)" :disabled = room.joinButtonDisabled>join the room</Button></p>
+                <ListItem v-if="hasRoom" v-for="room in allRoom" :key="room.index">
+                    <p style="margin-left:auto;margin-right:auto;">roomId：{{room.roomNumber}}, playerNumber: {{room.playerNumber}}     <Button type="primary" @click="enterRoomHandler(room.roomNumber)" :disabled = room.joinButtonDisabled>join the room</Button></p>
+                </ListItem>
+                <ListItem v-else v-for="room in allRoom" :key="room.index">
+                    <p style="margin-left:auto;margin-right:auto;">No room now</p>
                 </ListItem>
             </List>
         </div>
@@ -30,6 +33,7 @@ export default {
   name: "Hall",
   data() {
     return {
+    hasRoom: false,
       joinRoomNumber: '',
       showModal:false,
       allRoom: [
@@ -43,9 +47,10 @@ export default {
   },
   methods:{
       cancel(){
-          showModal = false;
+          this.showModal = false;
       },
     createRoomHandler(){
+        console.log("创建房间按下")
         var object = {
             type: "createRoom",
         }
@@ -99,19 +104,20 @@ export default {
           console.log("获取房间列表")
           var i = 0
           while(res.list[i]){
+              this.hasRoom = true
               this.allRoom[i].roomNumber = res.list[i].roomId
-              this,allRoom[i].playerNumber = res.list[i].userNum
+              this.allRoom[i].playerNumber = res.list[i].userNum
               if(res.list[i].userNum == 3){
-                  this,allRoom[i].joinButtonDisabled = true
+                  this.allRoom[i].joinButtonDisabled = true
               }
           }
       }
     }
   },
   mounted(){
+      this.socketApi.initWebSocket()
       var object = {
-          type: "enterRoom",
-          roomId: 10000,
+          type: "emptyResponse",
       }
       this.socketApi.sendSock(object, this.getConfigResult)
   }

@@ -33,6 +33,7 @@ function sendSock (agentData, callback) {
   globalCallback = callback
   if (websock.readyState === websock.OPEN) {
     // 若是ws开启状态
+    console.log(JSON.stringify(agentData))
     websocketsend(agentData)
   } else if (websock.readyState === websock.CONNECTING) {
     // 若是 正在开启状态，则等待1s后重新调用
@@ -68,9 +69,8 @@ function websocketOpen (e) {
   console.log('连接成功')
 }
 
-initWebSocket()
-
 // 将方法暴露出去
 export {
-  sendSock
+  sendSock,
+  initWebSocket
 }
