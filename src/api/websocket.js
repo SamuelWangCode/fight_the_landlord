@@ -69,8 +69,13 @@ function websocketOpen (e) {
   console.log('连接成功')
 }
 
+function shutDownWebsocket(){
+  websock.close()
+}
+
 // 将方法暴露出去
 export {
   sendSock,
-  initWebSocket
+  initWebSocket,
+  shutDownWebsocket
 }

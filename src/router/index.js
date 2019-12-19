@@ -5,6 +5,7 @@ import Register from '@/pages/register'
 import Hall from '@/pages/hall'
 import Information from '@/pages/information'
 import GameRoom from '@/pages/gameRoom'
+import TestCard from '@/pages/testcards'
 
 Vue.use(Router)
 
@@ -37,5 +38,10 @@ export default new Router({
       name: 'GameRoom',
       component: GameRoom
     },
+    {
+      path: '/testCard',
+      name: 'testCard',
+      component: TestCard
+    }
   ]
 })

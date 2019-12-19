@@ -31,11 +31,25 @@
                 </div>
             </div>
             <div class="bottomContainer">
-                <Button class="buttonContainer">Ready</Button>
+                <!-- 准备 -->
+                <Button class="buttonContainer" @click="setReady" v-if="readyTime" type="primary">Ready</Button>
+                <!-- 出牌 -->
+                <Button class="buttonContainer" @click="confirmCard" v-if="cardTime" type="primary">Confirm</Button>
+                <!-- 叫地主 -->
+                <Button class="buttonContainer" @click="callLord" v-if="callLordTime" type="primary">Call Lord</Button>
+                <!-- 抢地主 -->
+                <Button class="buttonContainer" @click="snatchLord" v-if="snatchLordTime" type="primary">Snatch Lord</Button>
                 <div style="border-style:solid;margin-top:1%;margin-left:3%;margin-right:3%;width:10%;height:20%;display:inline-block;">
-                    30
+                    {{score}}
                 </div>
-                <Button class="buttonContainer">Exit</Button>
+                <!-- 退出 -->
+                <Button class="buttonContainer" @click="leaveRoom" v-if="readyTime" type="error">Exit</Button>
+                <!-- 不要 -->
+                <Button class="buttonContainer" @click="pass" v-if="cardTime" type="error">Pass</Button>
+                <!-- 不叫 -->
+                <Button class="buttonContainer" @click="doNotCallLord" v-if="callLordTime" type="error">never mind</Button>
+                <!-- 不抢 -->
+                <Button class="buttonContainer" @click="doNotSnatchLord" v-if="snatchLordTime" type="error">never mind</Button>
             </div>
         </div>
         <div class="rightContainer">
@@ -66,10 +80,72 @@
 export default {
     name: 'GameRoom',
     data() {
-
+        return{
+            readyTime: true,
+            cardTime: false,
+            callLordTime: false,
+            snatchLordTime: false,
+            score: ''
+        }
     },
     methods: {
+        gameStart(){
+            this.score = 30
+        },
+        setReady(){
+            this.readyTime = false
+            this.score = "Ready"
+        },
+        leaveRoom(){
+            var object = {
+                type: "leaveRoom",
+            }
+            this.socketApi.sendSock(object, this.getConfigResult)
+        },
+        confirmCard(){
 
+        },
+        pass(){
+
+        },
+        callLord(){
+
+        },
+        doNotCallLord(){
+
+        },
+        snatchLord(){
+
+        },
+        doNotSnatchLord(){
+
+        },
+        getConfigResult (res) {
+            var _this = this
+            // 接收回调函数返回数据的方法
+            console.log(res)
+            res = JSON.parse(res)
+            console.log(res.type)
+            if(res.type=="leaveRoom"){
+                if(res.status == "success"){
+                    this.$Notice.success({
+                        title: "leave room success!"
+                    })
+                    _this.socketApi.shutDownWebsocket()
+                    this.$router.push("/hall")
+                }else if(res.status =="error"){
+                    this.$Notice.error({
+                        title: res.cause
+                    })
+                }
+            }
+        }
+    },
+    mounted(){
+        var object = {
+            type: "emptyResponse",
+        }
+        this.socketApi.sendSock(object, this.getConfigResult)
     }
 }
 </script>
