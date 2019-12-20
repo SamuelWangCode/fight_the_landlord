@@ -1,6 +1,8 @@
 // html代码
 <template>
     <div class="container">
+        <Button @click="changeaCards">添加手牌</Button>
+        <!-- <Button @click="changeaCards">添加手牌</Button> -->
         <div class="leftContainer">
             <div style="float:left; width:80%">
                 <img src="../assets/beimian.png" alt="扑克牌背面" class="img">
@@ -32,15 +34,15 @@
             </div>
             <div class="bottomContainer">
                 <!-- 准备 -->
-                <Button class="buttonContainer" @click="setReady" v-if="readyTime" type="primary">Ready</Button>
+                <Button class="buttonContainer" @click="setReady" v-if="readyTime" type="primary">{{ReadyText}}</Button>
                 <!-- 出牌 -->
                 <Button class="buttonContainer" @click="confirmCard" v-if="cardTime" type="primary">Confirm</Button>
                 <!-- 叫地主 -->
                 <Button class="buttonContainer" @click="callLord" v-if="callLordTime" type="primary">Call Lord</Button>
                 <!-- 抢地主 -->
                 <Button class="buttonContainer" @click="snatchLord" v-if="snatchLordTime" type="primary">Snatch Lord</Button>
-                <div style="border-style:solid;margin-top:1%;margin-left:3%;margin-right:3%;width:10%;height:20%;display:inline-block;">
-                    {{score}}
+                <div style="margin-top:1%;margin-left:3%;margin-right:3%;width:10%;height:20%;display:inline-block;">
+                    {{timer}}
                 </div>
                 <!-- 退出 -->
                 <Button class="buttonContainer" @click="leaveRoom" v-if="readyTime" type="error">Exit</Button>
@@ -50,6 +52,15 @@
                 <Button class="buttonContainer" @click="doNotCallLord" v-if="callLordTime" type="error">never mind</Button>
                 <!-- 不抢 -->
                 <Button class="buttonContainer" @click="doNotSnatchLord" v-if="snatchLordTime" type="error">never mind</Button>
+                <cards
+                :aCards="aCards"
+                :aOutCards="aOutCards"
+                oAgaOut=[]
+                nCallLandlord=2
+                :aSelfSelectCards="aSelfSelectCards"
+                @onChangeSelectCards="handleChangeSelectCards"
+                style="margin-bottom:200px;"
+                ></cards>
             </div>
         </div>
         <div class="rightContainer">
@@ -77,24 +88,53 @@
 
 // javaScript代码
 <script>
+import cards from '../components/Card/cards';
 export default {
     name: 'GameRoom',
     data() {
         return{
+            ReadyText: "Ready",
             readyTime: true,
             cardTime: false,
             callLordTime: false,
             snatchLordTime: false,
-            score: ''
+            timer: '',
+            aSelfSelectCards:[],
+            aCards : [1,2,3],
+            aOutCards:[
+            {
+                value:5
+            },
+            {
+                value:6
+            }
+            ],
         }
     },
+    components: {
+        cards
+    },
     methods: {
+        changeaCards(){
+            this.aCards = [2,3,4];
+            console.log("he");
+        },
+        handleChangeSelectCards(aCards = []){
+            this.aSelfSelectCards = aCards;
+            console.log("hi");
+        },
         gameStart(){
             this.score = 30
+            this.readyTime = false
         },
         setReady(){
-            this.readyTime = false
-            this.score = "Ready"
+            if(this.ReadyText=="Ready"){
+            this.timer = "Ready"
+            this.ReadyText = "Unready"
+            }else{
+                this.timer = ""
+            this.ReadyText = "Ready"
+            }
         },
         leaveRoom(){
             var object = {
@@ -161,26 +201,26 @@ export default {
     width: 15%;
     float: left;
     height: 100%;
-    border-style: solid;
+    /* border-style: solid; */
 }
 .centerContainer{
     width: 70%;
     float: left;
-    height: 50%;
+    /* height: 100%; */
 }
 .topContainer{
     height: 30%;
-    border-style: solid;
+    /* border-style: solid; */
 }
 .bottomContainer{
-    height: 25ex;
-    border-style: solid;
+    height: 30ex;
+    /* border-style: solid; */
 }
 .rightContainer{
     width: 15%;
     float: right;
     height: 100%;
-    border-style: solid;
+    /* border-style: solid; */
 }
 .img{
     width: 80%;
@@ -190,7 +230,7 @@ export default {
     width: 20%;
     float:left;
     margin-top:40%;
-    border-style: solid;
+    /* border-style: solid; */
 }
 .remains{
     width: 100%;
@@ -205,7 +245,7 @@ export default {
     margin-bottom: 25%;
 }
 .dipai{
-    border-style: solid;
+    /* border-style: solid; */
     width: 30%;
     margin-left: auto;
     margin-right: auto;
@@ -216,7 +256,7 @@ export default {
     width: 30%;
     font-weight: bold;
     font-size: 30px; 
-    border-style: solid;
+    /* border-style: solid; */
     margin-left: auto;
     margin-right: auto;
     margin-bottom: 1%;

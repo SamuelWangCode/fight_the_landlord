@@ -215,7 +215,7 @@ export default{
 <style>
 	.outcards {
       width: 100%;
-      margin-top: 60px;
+      /* margin-top: 60px; */
       
     }
 	.handcards {

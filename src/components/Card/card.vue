@@ -1,7 +1,7 @@
 //card
 <template>
 	<div :class="fCardClass">
-		<img id="card" v-bind:src="value | append"/>
+		<img id="card" v-bind:src="value | append" ondragstart='return false;'/>
 		<!-- <button type="text" @click="add">+1</button> -->
 	</div>
 </template>
