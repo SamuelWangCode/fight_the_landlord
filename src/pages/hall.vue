@@ -76,6 +76,7 @@ export default {
           console.log("创建房间")
           if(res.status=="success"){
               console.log("创建房间成功")
+              this.$store.commit("changeSeat",res.seat)
               this.$Notice.success({
                   title: "Create Room Success!"
                 })
@@ -90,6 +91,7 @@ export default {
           console.log("加入房间")
           if(res.status=="success"){
               console.log("加入房间成功")
+              this.$store.commit("changeSeat",res.seat)
               this.$Notice.success({
                   title: "Enter Room Success!"
                 })
