@@ -99,6 +99,7 @@ export default {
     data() {
         return{
             Players:["","","",""],
+            
 
             passLordTime:0,   //不叫地主的次数
             callLordSeat:-1,  //叫地主的人的位置

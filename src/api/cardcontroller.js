@@ -1,5 +1,7 @@
 import CARDSTYPE from './CARDSTYPE.js';
-import {CardHelper} from './CardHelper.js';
+import {
+	CardHelper
+} from './CardHelper.js';
 var CardControler = {
 	//找到打出的牌中数量最多，牌面最大的牌，它决定了这组牌的牌力
 	fGetCardsPower: function(aCards) {
@@ -128,6 +130,7 @@ var CardControler = {
 		return ret;
 	},
 	fJudge_DAN_SHUN: function(nLen, oCardsNum) {
+		var self = this;
 		if (nLen < 5 || oCardsNum['1'].length < 5 || nLen != oCardsNum['1'].length) {
 			return false;
 		}
@@ -143,6 +146,7 @@ var CardControler = {
 		return true;
 	},
 	fJudge_SHUANG_SHUN: function(nLen, oCardsNum) {
+		var self = this;
 		if (nLen < 6 || oCardsNum['2'].length < 3 || nLen != (oCardsNum['2'].length * 2)) {
 			return false;
 		}
@@ -158,6 +162,7 @@ var CardControler = {
 		return true;
 	},
 	fJudge_SAN_SHUN: function(nLen, oCardsNum) {
+		var self = this;
 		if (nLen < 6 || oCardsNum['3'].length < 2 || nLen != (oCardsNum['3'].length * 3)) {
 			return false;
 		}
@@ -173,6 +178,7 @@ var CardControler = {
 		return true;
 	},
 	fJudge_WANG_ZHA: function(nLen, oCardsNum) {
+		var self = this;
 		if (nLen != 2 || oCardsNum['1'].indexOf(22) < 0 || oCardsNum['1'].indexOf(23) < 0)
 			return false;
 		return true;
@@ -318,7 +324,7 @@ var CardControler = {
 		}
 		return ret;
 	},
-	
+
 	fTouchCards: function(aSelCards, aMyCards, aSelfUpCards, oLastOut) {
 		var self = this;
 		var oMyCardList = {};
