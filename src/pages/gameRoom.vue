@@ -29,7 +29,6 @@
             </div>
             <div class="remains">
                 {{leftCardRemains}}
-                17
             </div>
             <div class="userName">
                 {{leftUserName}}
@@ -53,15 +52,15 @@
                 <div style="width:100%;height:20%;margin-top:2%;margin-bottom:2%">
                     <div style="float:left;width:50%">
                         <outCards
-                        :aOutCards="BOutCards"
-                        :bNoOut="BNoOut"
+                        :aOutCards="aBOut"
+                        :bNoOut="bBNoOut"
                         :nCallLandlord="BCallLandLord">
                     </outCards>
                     </div>
                     <div style="float:right;width:50%">
                         <outCards
-                        :aOutCards="AOutCards"
-                        :bNoOut="ANoOut"
+                        :aOutCards="aAOut"
+                        :bNoOut="bANoOut"
                         :nCallLandlord="ACallLandLord">
                     </outCards>
                     </div>
@@ -74,7 +73,7 @@
                 <!-- 准备 -->
                 <Button class="buttonContainer" @click="setReady" v-if="readyTime" type="primary">{{ReadyText}}</Button>
                 <!-- 出牌 -->
-                <Button class="buttonContainer" @click="confirmCard" :disable="!bAvailOutCards" v-if="cardTime" type="primary">Confirm</Button>
+                <Button class="buttonContainer" @click="confirmCard" :disabled="bAvailOutCards" v-if="cardTime" type="primary">Confirm</Button>
                 <!-- 叫地主 -->
                 <Button class="buttonContainer" @click="callLord" v-if="callLordTime" type="primary">CallLord</Button>
                 <!-- 抢地主 -->
@@ -91,6 +90,7 @@
                 <Button class="buttonContainer" @click="doNotSnatchLord" v-if="snatchLordTime" type="error">never mind</Button>
                 <cards
                 :aCards="aSelfCards"
+                :bNoOut="bSelfNoOut"
                 :aOutCards="aSelfOut"
                 :nCallLandlord="nCallLandLord"
                 :aSelfSelectCards="aSelfSelectCards"
@@ -108,7 +108,7 @@
                     </div>
                     <div style="width:40%;margin-left:2%;margin-right:2%;float:right">
                         <div class="userMsg">
-                        {{myUserSign}} 农民
+                        {{myUserSign}}
                         </div>
                     </div>
                     <div style="width:6%;margin-left:auto;margin-right:auto;border-style:ridge">
@@ -131,7 +131,6 @@
             </div> 
             <div class="remains">
                 {{rightCardRemains}}
-                17
             </div>
             <div class="userName">
                 {{rightUserName}}
@@ -159,12 +158,12 @@ export default {
     name: 'GameRoom',
     data() {
         return{
+            // mockCards:[29,33,37,41,45,49,1],
             userIds:['','','',''],
-            BOutCards:"",
-            BNoOut:0,
+            bBNoOut:0,
             BCallLandLord:0,
-            AOutCards:"",
-            ANoOut:0,
+            bANoOut:0,
+            bSelfNoOut:0,
             ACallLandLord:0,
             nCallLandLord:0,
             passLordTime: 0,
@@ -173,9 +172,11 @@ export default {
             nBankerSeat:-1,
             nSelfSelectCardsType: 0,    //自己选中的牌的牌型
             nSelfSelectCardsPower: 0,   //自己选中的牌的大小
-            bAvailOutCards: false,       //自己选中的牌能不能出
+            bAvailOutCards: true,       //自己选中的牌能不能出
             aSelfAvailCards: [],         //推荐的出牌
             baseCard: [],
+            aAOut:[],
+            aBOut:[],
 
             //上一次的出牌信息
             oLastOut: {
@@ -229,7 +230,7 @@ export default {
         },
         // 判断一个位置与自己的关系 0:自己 1：下家 2：上家
         judgeRelation(seat){
-            var dis = seat-this.nSelfSeat;
+            var dis = seat- parseInt(this.$store.state.seat);
             if(dis==0){
                 return 0
             }else if(dis==1||dis==-2){
@@ -241,8 +242,8 @@ export default {
             }
         },
         // json与牌的数组转换
-        jsonToCard(json){
-            var cards = json.cards
+        jsonToCard(cards){
+            // var cards = json.cards
             console.log(cards)
             var cardArray = []
             for(let a of cards){
@@ -263,16 +264,21 @@ export default {
         },
         // 获得某人的Id
         getId(rel){
+            console.log("getID" + rel)
             if(rel==1){
-                var seat = this.nSelfSeat + 1;
+                var seat = parseInt(this.$store.state.seat) + 1;
+                console.log("seat:" + seat)
                 if(seat<=3){
+                    console.log("seat<=3")
+                    console.log(this.userIds[seat])
                     return this.userIds[seat]
+                    
                 }else{
                     return this.userIds[1]
                 }
             }
             else if(rel==2){
-                var seat = this.nSelfSeat - 1
+                var seat = parseInt(this.$store.state.seat) - 1
                 if(seat>0){
                     return this.userIds[seat]
                 }else{
@@ -444,6 +450,7 @@ export default {
             }
             else{
                 console.log('上家出过牌，自己的出牌按钮v-if绑定的属性设置为true');
+                this.aSelfSelectCards = []
                 this.cardTime = true
             }
         },
@@ -471,11 +478,13 @@ export default {
             this.bBNoOut = 1;
             this.aBOut = [];
             // console.log('上家不出，自己的出牌按钮v-if绑定的属性设置为true');
+            this.aSelfSelectCards = []
             this.cardTime = true
         },
         Selfbuchu(){
             this.bSelfNoOut = 1;
             this.aSelfOut = [];
+            this.cardTime = false
         },
         ObjectToArray(Cards = []){
             var aCards = [];
@@ -547,6 +556,8 @@ export default {
                 this.socketApi.sendSock(object,this.getConfigResult)
             }else if(this.callLordSeat == 0){
                 //上一个抢地主的是地主
+                console.log(this.snatchLordSeat)
+                console.log(this.getId(this.snatchLordSeat))
                 var object = {
                     type: "getBaseCards",
                     LordId: this.getId(this.snatchLordSeat)
@@ -554,7 +565,7 @@ export default {
                 this.socketApi.sendSock(object,this.getConfigResult)
             }else{
                 var object = {
-                    type: "noSnatch"
+                    type: "noSnatchLord"
                 }
                 this.socketApi.sendSock(object,this.getConfigResult)
             }
@@ -603,6 +614,7 @@ export default {
                     title:"有人加入了房间"
                 })
             }else if(res.type=="ready"){
+                console.log(res.userId)
                 var seat = this.userIds.indexOf(res.userId)
                 console.log(seat)
                 var rel = this.judgeRelation(seat)
@@ -641,7 +653,9 @@ export default {
                 var seat = this.userIds.indexOf(res.userId)
                 var rel = this.judgeRelation(seat)
                 if(rel==0){
-                    this.callLord()
+                    this.nCallLandLord = 1;
+                    this.callLordSeat = 0;
+                    this.callLordTime = false
                 }else if(rel==1){
                     this.ACall()
                 }else if(rel==2){
@@ -653,7 +667,6 @@ export default {
                 if(rel==0){
                     this.snatchLordSeat = 0;
                     this.nCallLandLord = 3;
-                    this.midScore*=2
                     this.snatchLordTime = false;
                 }else if(rel==1){
                     this.ASnatch()
@@ -684,7 +697,7 @@ export default {
                 this.aSelfCards = cards
             }else if(res.type=="doubleScore"){
                 this.midScore *= 2
-            }else if(res.type=="noSnatch"){
+            }else if(res.type=="noSnatchLord"){
                 var seat = this.userIds.indexOf(res.userId)
                 var rel = this.judgeRelation(seat)
                 if(rel==0){
@@ -703,7 +716,7 @@ export default {
                 this.getLandLord(rel)
                 if(rel==0){
                     var SelfCards = this.aSelfCards;
-                    SelfCards = SelfCards.concat(this.jsonToCard(this.baseCard));
+                    SelfCards = SelfCards.concat(this.ObjectToArray(this.baseCard));
                     SelfCards = CardControler.fSortHandCards(SelfCards);
                     this.aSelfCards = SelfCards;
                     this.aSelfSelectCards = [];
@@ -711,7 +724,9 @@ export default {
             }else if(res.type=="play"){
                 var seat = this.userIds.indexOf(res.userId)
                 var rel = this.judgeRelation(seat)
+                console.log(res.cards.length)
                 if(res.cards.length==0){
+                    console.log(rel)
                     if(rel==0){
                         this.Selfbuchu()
                     }else if(rel==1){
@@ -731,8 +746,10 @@ export default {
                 }
             }else if(res.type == "getRoomInfo"){
                 for(let user of res.userInfos){
+                    console.log(user)
                     this.userIds[user.seat] = user.userId      
                 }
+                console.log(this.userIds)
             }
         },
         // 测试开始出牌
@@ -776,7 +793,8 @@ export default {
         // 上家不叫
         BNotCall(){
             this.passLordTime += 1;
-            this.BCallLandLord = 2
+            this.BCallLandLord = 2;
+            this.callLordTime = true;
         },
         // 下家抢地主
         ASnatch(){
@@ -858,7 +876,7 @@ export default {
             if (nType == 0) {
               bEnable = false;
             }
-            this.bAvailOutCards = bEnable;
+            this.bAvailOutCards = !bEnable;
         },
         'aSelfCards'(aCards){
             if(aCards.length == 0){
@@ -883,6 +901,7 @@ export default {
         console.log(this.userIds)
         var object = {
             type: "getRoomInfo",
+            roomId: this.$store.state.roomId
         }
         this.socketApi.sendSock(object, this.getConfigResult)
     }

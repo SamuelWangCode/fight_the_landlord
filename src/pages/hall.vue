@@ -6,7 +6,7 @@
                 <ListItem v-if="hasRoom" v-for="room in allRoom" :key="room.index">
                     <p style="margin-left:auto;margin-right:auto;">roomId：{{room.roomNumber}}, playerNumber: {{room.playerNumber}}     <Button type="primary" @click="enterRoomHandler(room.roomNumber)" :disabled = room.joinButtonDisabled>join the room</Button></p>
                 </ListItem>
-                <ListItem v-else v-for="room in allRoom" :key="room.index">
+                <ListItem v-else>
                     <p style="margin-left:auto;margin-right:auto;">No room now</p>
                 </ListItem>
             </List>
@@ -37,7 +37,7 @@ export default {
       joinRoomNumber: '',
       showModal:false,
       allRoom: [
-        { roomNumber: '', playerNumber: '', joinButtonDisabled: false},
+        // { roomNumber: '', playerNumber: '', joinButtonDisabled: false},
         // { roomNumber: "13", playerNumber: "1", joinButtonDisabled: false},
         // { roomNumber: "14", playerNumber: "1", joinButtonDisabled: false},
         // { roomNumber: "15", playerNumber: "1", joinButtonDisabled: false}
@@ -46,9 +46,37 @@ export default {
     };
   },
   methods:{
-      cancel(){
+    createRoomList(objectArray){
+        objectArray = objectArray ? objectArray : []
+        console.log(objectArray.length)
+        if(objectArray.length==0){
+            this.hasRoom = false
+            console.log(this.hasRoom)
+        }else{
+            this.hasRoom = true
+            var roomList = []
+            for(let object of objectArray){
+                var roomNumber = object.roomId;
+                var playerNumber= object.userNum;
+                var joinDisabled = true
+                if(playerNumber==3){
+                    joinDisabled = true
+                }else{
+                    joinDisabled = false
+                }
+                var data = {
+                    roomNumber: roomNumber,
+                    playerNumber: playerNumber,
+                    joinButtonDisabled: joinDisabled
+                }
+                roomList.push(data)
+            }
+            return roomList
+        }
+    },
+    cancel(){
           this.showModal = false;
-      },
+    },
     createRoomHandler(){
         console.log("创建房间按下")
         var object = {
@@ -76,11 +104,13 @@ export default {
           console.log("创建房间")
           if(res.status=="success"){
               console.log("创建房间成功")
-              this.$store.commit("changeSeat",res.seat)
+              console.log("房间号:" + res.roomId)
+              this.$store.commit("changeSeat", res.seat)
               this.$Notice.success({
                   title: "Create Room Success!"
                 })
             //   setTimeout(1000)
+              this.$store.commit("changeRoom", res.roomId)
               this.$router.push("/gameRoom")
           }else if(res.status=="error"){
               console.log("没创成功")
@@ -93,6 +123,7 @@ export default {
           if(res.status=="success"){
               console.log("加入房间成功")
               this.$store.commit("changeSeat",res.seat)
+              this.$store.commit("changeRoom", res.roomId)
               this.$Notice.success({
                   title: "Enter Room Success!"
                 })
@@ -106,20 +137,8 @@ export default {
       }else if(res.type=="roomlist"){
         //   console.log("获取房间列表")
         //   console.log(res.list)
-          var i = 0
-          if(res.list.length==0){
-              this.hasRoom = false
-          }
-          while(res.list[i]){
-            //   console.log(i)
-              this.hasRoom = true
-              this.allRoom[i].roomNumber = res.list[i].roomId
-              this.allRoom[i].playerNumber = res.list[i].userNum
-              if(res.list[i].userNum == 3){
-                  this.allRoom[i].joinButtonDisabled = true
-              }
-              i+=1
-          }
+        this.allRoom = this.createRoomList(res.list)
+        console.log(this.hasRoom)
         //   console.log("跳出循环")
       }
     }
