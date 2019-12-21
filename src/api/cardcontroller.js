@@ -76,6 +76,7 @@ var CardControler = {
 		if (nCardVal == 2) {
 			nCardVal = 16;
 		}
+		return nCardVal;
 	},
 	//牌型表和对应检查方法
 	oCardsTypeList: {
@@ -336,7 +337,7 @@ var CardControler = {
 		var lastPokers = [];
 		var lastCount = 0;
 		var lastType = 0;
-		if (oLastOut) {
+		if (oLastOut && oLastOut['nSeat'] != 0) {
 			lastPokers = oLastOut['aCards'] || [];
 			lastPower = oLastOut['nPower'] || 0;
 			lastCount = lastPokers.length || 0;

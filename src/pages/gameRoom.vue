@@ -71,7 +71,7 @@
                 <!-- 准备 -->
                 <Button class="buttonContainer" @click="setReady" v-if="readyTime" type="primary">{{ReadyText}}</Button>
                 <!-- 出牌 -->
-                <Button class="buttonContainer" @click="confirmCard" v-if="cardTime" type="primary">Confirm</Button>
+                <Button class="buttonContainer" @click="confirmCard" :disable="!bAvailOutCards" v-if="cardTime" type="primary">Confirm</Button>
                 <!-- 叫地主 -->
                 <Button class="buttonContainer" @click="callLord" v-if="callLordTime" type="primary">CallLord</Button>
                 <!-- 抢地主 -->
@@ -87,8 +87,8 @@
                 <!-- 不抢 -->
                 <Button class="buttonContainer" @click="doNotSnatchLord" v-if="snatchLordTime" type="error">never mind</Button>
                 <cards
-                :aCards="aCards"
-                :aOutCards="aOutCards"
+                :aCards="aSelfCards"
+                :aOutCards="aSelfOut"
                 :nCallLandlord="nCallLandLord"
                 :aSelfSelectCards="aSelfSelectCards"
                 @onChangeSelectCards="handleChangeSelectCards"
@@ -148,10 +148,15 @@
 <script>
 import cards from '../components/Card/cards';
 import OutCards from '../components/Card/outcards';
+import {CardControler} from '../api/cardcontroller'
+import {CardHelper} from '../api/CardHelper.js';
+import CARDSTYPE from '../api/CARDSTYPE.js';
+
 export default {
     name: 'GameRoom',
     data() {
         return{
+            userIds:['','',''],
             BOutCards:"",
             BNoOut:0,
             BCallLandLord:0,
@@ -163,7 +168,20 @@ export default {
             callLordSeat: -1,
             snatchLordSeat:-1,
             nBankerSeat:-1,
-            // nSelfSeat: this.$store.state.seat,
+            nSelfSelectCasrdsType: 0,    //自己选中的牌的牌型
+            nSelfSelectCasrdsPower: 0,   //自己选中的牌的大小
+            bAvailOutCards: false,       //自己选中的牌能不能出
+            aSelfAvailCards: [],         //推荐的出牌
+
+            //上一次的出牌信息
+            oLastOut: {
+                nSeat: 0,
+                aCards: [],
+                nPower: 0,
+                nType: 0
+            },
+
+            nSelfSeat: this.$store.state.seat,
             midScore:'',
             ReadyText: "Ready",
             readyTime: true,
@@ -172,15 +190,8 @@ export default {
             snatchLordTime: false,
             myUserSign: '',
             aSelfSelectCards:[],
-            aCards : [1,2,3],
-            aOutCards:[
-            {
-                value:5
-            },
-            {
-                value:6
-            }
-            ],
+            aSelfCards : [1,2,3],
+            aSelfOut:[],
             leftCardRemains:'',
             leftUserName:'',
             leftScore:'',
@@ -196,9 +207,7 @@ export default {
         OutCards
     },
     computed:{
-        nSelfSeat(){
-            return this.$store.state.seat;
-        }
+
     },
     methods: {
         // 判断一个位置与自己的关系 0:自己 1：下家 2：上家
@@ -216,15 +225,35 @@ export default {
         },
         // json与牌的数组转换
         jsonToCard(json){
-
+            var cards = json.cards
+            console.log(cards)
+            var cardArray = []
+            for(let a of cards){
+                cardArray.push(a.value + 1)
+            }
+            return cardArray
         },
         // 提示
         help(){
-
+            let aCards = CardHelper.fGetHintCards();
+            this.handleChangeSelectCards(aCards);
+        },
+        // 更新自己的手牌
+        renewACards(SelfOutCards = []){
+            console.log("更新自己的手牌");
+            let tmpACards = this.aSelfCards;
+            for(var i=0; i < SelfOutCards.length; i++){
+                let idx = tmpACards.indexOf(SelfOutCards[i]);
+                if(idx != -1){
+                    tmpACards.splice(idx,1);
+                }
+            }
+            this.aSelfCards = tmpACards;
+            this.aSelectedCards = [];
         },
         // 变更手牌
         changeaCards(){
-            this.aCards = [2,3,4]
+            // this.aCards = [2,3,4]
             var json = {
                 "seat":"2",
                 "cards":[
@@ -281,6 +310,9 @@ export default {
                     }
                 ]
             }
+            var cards = this.jsonToCard(json)
+            cards = CardControler.fSortHandCards(cards)
+            this.aSelfCards = cards
             console.log("he");
         },
         // 更改选中的牌
@@ -311,6 +343,7 @@ export default {
             }
             this.socketApi.sendSock(object, this.getConfigResult)
         },
+
         // 获得地主信息
         getLandLord(seat){
             this.nCallLandLord = 0
@@ -335,11 +368,100 @@ export default {
         },
         // 出牌
         confirmCard(){
-
+            var aSelectedCards = CardControler.fSortOutCards(this.aSelfSelectCards);
+            var oSelectedCards = this.ArrayToObject(aSelectedCards);
+            this.Selfchupai(oSelectedCards)
         },
         // 不出
         pass(){
 
+        },
+        Achupai(OutCards = []){
+            this.bANoOut = 0;
+            this.aAOut = OutCards;
+            var aOutCards = this.ObjectToArray(OutCards);
+            var oLastOutCards = {nSeat: -1, aCards: [], nPower: 0,nType: 0};
+            oLastOutCards.nSeat = 1;
+            oLastOutCards.aCards = aOutCards;
+            oLastOutCards.nPower = CardControler.fGetCardsPower(aOutCards);
+            oLastOutCards.nType = CardControler.fGetCardsType(aOutCards);
+            if (oLastOutCards.nType == CARDSTYPE.SI_ZHANG || oLastOutCards.nType == CARDSTYPE.HUO_JIAN) {
+                this.midScore *= 2;
+            }
+            this.oLastOut = oLastOutCards;
+
+
+            this.rightCardRemains -= aOutCards.length;
+            if(this.rightCardRemains == 0){
+                console.log("自己输了");
+            }
+        },
+        Bchupai(OutCards = []){
+            this.bBNoOut = 0;
+            this.aBOut = OutCards;
+            var aOutCards = this.ObjectToArray(OutCards);
+            var oLastOutCards = {nSeat: -1, aCards: [], nPower: 0,nType: 0};
+            oLastOutCards.nSeat = 2;
+            oLastOutCards.aCards = aOutCards;
+            oLastOutCards.nPower = CardControler.fGetCardsPower(aOutCards);
+            oLastOutCards.nType = CardControler.fGetCardsType(aOutCards);
+            if (oLastOutCards.nType == CARDSTYPE.SI_ZHANG || oLastOutCards.nType == CARDSTYPE.HUO_JIAN) {
+                this.midScore *= 2;
+            }
+            this.oLastOut = oLastOutCards;
+
+
+            this.leftCardRemains -= aOutCards.length;
+            if(this.leftCardRemains == 0){
+                console.log("自己输了");
+            }
+            else{
+                console.log('上家出过牌，自己的出牌按钮v-if绑定的属性设置为true');
+            }
+        },
+        Selfchupai(OutCards = []){
+            console.log("自己出牌了");
+            this.bSelfNoOut = 0;
+            this.aSelfOut = OutCards;
+            var aOutCards = this.ObjectToArray(OutCards);
+            var oLastOutCards = {nSeat: -1, aCards: [], nPower: 0,nType: 0};
+            oLastOutCards.nSeat = 0;
+            oLastOutCards.aCards = aOutCards;
+            oLastOutCards.nPower = CardControler.fGetCardsPower(aOutCards);
+            oLastOutCards.nType = CardControler.fGetCardsType(aOutCards);
+            if (oLastOutCards.nType == CARDSTYPE.SI_ZHANG || oLastOutCards.nType == CARDSTYPE.HUO_JIAN) {
+                this.midScore *= 2;
+            }
+            this.oLastOut = oLastOutCards;
+            this.renewACards(aOutCards);
+        },
+        Abuchu(){
+            this.bANoOut = 1;
+            this.aAOut = [];
+        },
+        Bbuchu(){
+            this.bBNoOut = 1;
+            this.aBOut = [];
+            console.log('上家不出，自己的出牌按钮v-if绑定的属性设置为true');
+        },
+        Selfbuchu(){
+            this.bSelfNoOut = 1;
+            this.aSelfOut = [];
+        },
+        ObjectToArray(Cards = []){
+            var aCards = [];
+            for(var i = 0; i < Cards.length; i++){
+                aCards.push(Cards[i]['value']);
+            }
+            return aCards;
+        },
+        ArrayToObject(Cards = []){
+            var aCards = [];
+            for(var i = 0; i < Cards.length; i++){
+                var o = { 'value': Cards[i]};
+                aCards.push(o);
+            }
+            return aCards;
         },
         // 叫地主
         callLord(){
@@ -404,9 +526,31 @@ export default {
                     this.$Notice.error({
                         title: res.cause
                     })
+                }else if(res.userId){
+                    var rel = this.judgeRelation(res.seat)
+                    if(rel==1){
+                        this.rightScore = ''
+                        this.rightUserName = ''
+                        this.userIds[res.seat - 1] = ''
+                    }
+                    this.$Notice.error({
+                    title:"有人离开了房间"
+                })
                 }
             }else if(res.type=="enterRoom"){
-
+                this.userIds[res.seat - 1] = res.userId
+                console.log(this.userIds)
+                var rel = this.judgeRelation(res.seat)
+                if(rel==1){
+                    this.rightUserName = res.userName
+                    this.rightScore = res.score
+                }else if (rel==2){
+                    this.leftUserName = res.userName
+                    this.leftScore = res.score
+                }
+                this.$Notice.message({
+                    title:"有人加入了房间"
+                })
             }else if(res.type=="ready"){
 
             }else if(res.type=="unready"){
@@ -494,10 +638,78 @@ export default {
             this.snatchLordTime = true
         },
     },
+    watch: {
+        'oLastOut'(newVal = {nSeat: -1, aCards: [], nPower: 0,nType: 0}){
+            let {nSeat,aCards,nPower,nType} = newVal;
+            if (nSeat != -1) {
+                if(nSeat == 0){
+                    aCards=[];
+                    nPower = 0;
+                    nType = 0;
+                }
+                let nNum = aCards.length;
+                console.log("进行了可出牌的判断");
+                console.log(nType);
+                this.aSelfAvailCards = CardHelper.fGetAvailCards(this.aSelfCards, nType, nPower, nNum);
+            }
+        },
+       'nBankerSeat'(newVal) {
+            if (this.nBankerSeat == this.nSelfSeat) {
+                // 自己成为地主时获取提示
+                this.aSelfAvailCards = CardHelper.fGetAvailCards(this.aSelfCards, 0, 0, 0);
+                console.log("成为地主，自己的出牌按钮v-if绑定的属性设置为true");
+            }
+        },
+        'aSelfSelectCards'(aCards) {
+            let nPower = CardControler.fGetCardsPower(aCards);
+            let nType = CardControler.fGetCardsType(aCards);
+            this.nSelfSelectCasrdsType = nType;
+            this.nSelfSelectCasrdsPower = nPower;
+            // 处理按钮
+            let nCount = aCards.length;
+            let oLastOut = this.oLastOut;
+            let nLastCount = oLastOut.aCards && oLastOut.aCards.length ? oLastOut.aCards.length : 0;
+            let nLastType = oLastOut.nType || 0;
+            let nLastPower = oLastOut.nPower || 0;
+            let bEnable = false;
+            if (nType == CARDSTYPE.HUO_JIAN) {
+              // 火箭最大
+              bEnable = true;
+            } else if (nType == CARDSTYPE.SI_ZHANG) {
+              if (nLastType == CARDSTYPE.SI_ZHANG && nPower > nLastPower) {
+                // 上家也是炸弹 则判断大小
+                bEnable = true;
+              } else if (nLastType != CARDSTYPE.SI_ZHANG && nLastType != CARDSTYPE.HUO_JIAN) {
+                // 炸弹大于普通牌
+                bEnable = true;
+              }
+            } else {
+              if (nType == nLastType && nPower > nLastPower && nCount == nLastCount) {
+                bEnable = true;
+              } else if (nType != 0 && nLastCount == 0) {
+                // 上家没出牌
+                bEnable = true;
+              } else if (oLastOut.nSeat == this.nSelfSeat){
+                bEnable = true;
+              }
+            }
+            if (nType == 0) {
+              bEnable = false;
+            }
+            this.bAvailOutCards = bEnable;
+        },
+        'aSelfCards'(aCards){
+            if(aCards.length == 0){
+                console.log("自己胜利");
+            }
+        }
+    },
     mounted(){
         // --------------------------------------测试用---------------------------------------------------
-        this.$store.commit("changeSeat", 1)
-
+        this.nSelfSeat = this.$store.state.seat
+        console.log(this.nSelfSeat)
+        this.userIds[this.nSelfSeat - 1] = this.$store.state.userID
+        console.log(this.userIds)
         var object = {
             type: "emptyResponse",
         }
