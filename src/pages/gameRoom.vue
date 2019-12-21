@@ -14,23 +14,26 @@
         <Button @click="ANotSnatch">A不抢</Button>
         <Button @click="BSnatch">B抢地主</Button>
         <Button @click="BNotSnatch">B不抢</Button>
-        <!-- <Button @click="changeaCards">添加手牌</Button> -->
+        <Button @click="changeaCards">添加手牌</Button>
         <div class="leftContainer">
             <div style="float:left; width:80%">
                 <img src="../assets/beimian.png" alt="扑克牌背面" class="img">
             </div>
             <div class="timer">
-                <outCards
+                <!-- <outCards
                 :aOutCards="BOutCards"
                 :bNoOut="BNoOut"
                 :nCallLandlord="BCallLandLord">
-                </outCards>
+                </outCards> -->
+                30
             </div>
             <div class="remains">
                 {{leftCardRemains}}
+                17
             </div>
             <div class="userName">
                 {{leftUserName}}
+                lbw
             </div>
             <div class="score">
                 score：{{leftScore}}
@@ -47,8 +50,24 @@
                     :aOutCards="baseCard">
                     </OutCards>
                 </div>
+                <div style="width:100%;height:20%;margin-top:2%;margin-bottom:2%">
+                    <div style="float:left;width:50%">
+                        <outCards
+                        :aOutCards="BOutCards"
+                        :bNoOut="BNoOut"
+                        :nCallLandlord="BCallLandLord">
+                    </outCards>
+                    </div>
+                    <div style="float:right;width:50%">
+                        <outCards
+                        :aOutCards="AOutCards"
+                        :bNoOut="ANoOut"
+                        :nCallLandlord="ACallLandLord">
+                    </outCards>
+                    </div>
+                </div>
                 <div class="midScore">
-                    {{midScore}}
+                    当前倍数：{{midScore}}
                 </div>
             </div>
             <div class="bottomContainer">
@@ -57,12 +76,10 @@
                 <!-- 出牌 -->
                 <Button class="buttonContainer" @click="confirmCard" :disable="!bAvailOutCards" v-if="cardTime" type="primary">Confirm</Button>
                 <!-- 叫地主 -->
-                <Button class="buttonContainer" @click="callLord" v-if="callLordTime" type="primary">Call Lord</Button>
+                <Button class="buttonContainer" @click="callLord" v-if="callLordTime" type="primary">CallLord</Button>
                 <!-- 抢地主 -->
-                <Button class="buttonContainer" @click="snatchLord" v-if="snatchLordTime" type="primary">Snatch Lord</Button>
-                <div style="margin-top:1%;margin-left:3%;margin-right:3%;width:10%;height:20%;display:inline-block;">
-                    {{myUserSign}}
-                </div>
+                <Button class="buttonContainer" @click="snatchLord" v-if="snatchLordTime" type="primary">SnatchLord</Button>
+                <!-- 提示 -->
                 <Button style="width:10%;margin-top:1%; margin-left:-10%;" @click="help" v-if="cardTime" type="primary">Help</Button>
                 <!-- 退出 -->
                 <Button class="buttonContainer" @click="leaveRoom" v-if="readyTime" type="error">Exit</Button>
@@ -78,26 +95,47 @@
                 :nCallLandlord="nCallLandLord"
                 :aSelfSelectCards="aSelfSelectCards"
                 @onChangeSelectCards="handleChangeSelectCards"
-                style="margin-bottom:200px;"
+                style="margin-bottom:20px;"
                 ></cards>
+                <div style="width:100%;margin-bottom:1%">
+                    <div style="width:40%;margin-left:2%;margin-right:2%;float:left">
+                        <div class="userMsg">
+                            DaSima
+                        </div>
+                        <div class="userMsg">
+                            Score:
+                        </div>
+                    </div>
+                    <div style="width:40%;margin-left:2%;margin-right:2%;float:right">
+                        <div class="userMsg">
+                        {{myUserSign}} 农民
+                        </div>
+                    </div>
+                    <div style="width:6%;margin-left:auto;margin-right:auto;border-style:ridge">
+                        30
+                    </div>
+                </div>
             </div>
         </div>
         <div class="rightContainer">
             <div class="timer">
-                <outCards
+                <!-- <outCards
                 :aOutCards="AOutCards"
                 :bNoOut="ANoOut"
                 :nCallLandlord="ACallLandLord">
-                </outCards>
+                </outCards> -->
+                30
             </div>
             <div style="float:left; width:80%">
                 <img src="../assets/beimian.png" alt="扑克牌背面" class="img">
             </div> 
             <div class="remains">
                 {{rightCardRemains}}
+                17
             </div>
             <div class="userName">
                 {{rightUserName}}
+                PDD
             </div>
             <div class="score">
                 score：{{rightScore}}
@@ -857,31 +895,32 @@ export default {
     width: 100%;
     height: 100%;
     color: #475164;
+    /*background-image: url(/static/assets/GameDesk.jpg);*/
 }
 .leftContainer{
     width: 15%;
     float: left;
     height: 100%;
-    /* border-style: solid; */
+    border-style: solid; 
 }
 .centerContainer{
     width: 70%;
     float: left;
-    /* height: 100%; */
+    height: 100%;
 }
 .topContainer{
-    height: 30%;
-    /* border-style: solid; */
+    height: 45%;
+    border-style: solid; 
 }
 .bottomContainer{
-    height: 30ex;
-    /* border-style: solid; */
+    height: 55%;
+    border-style: solid; 
 }
 .rightContainer{
     width: 15%;
     float: right;
     height: 100%;
-    /* border-style: solid; */
+    border-style: solid; 
 }
 .img{
     width: 80%;
@@ -890,47 +929,53 @@ export default {
 .timer{
     width: 20%;
     float:left;
-    margin-top:40%;
-    /* border-style: solid; */
+    margin-top:30%;
+    border-style: ridge; 
 }
 .remains{
-    width: 100%;
-    margin-top: 80%;
-
+    width: 30%;
+    height: 10%;
+    margin-top: 70%;
+    margin-left: auto;
+    margin-right: auto;
 }
 .userName{
     margin-top:40%;
-
+    width:auto;
+    margin-left: auto;
+    margin-right: auto;
 }
 .score{
-    margin-bottom: 25%;
+    margin-bottom: 15%;
 }
 .dipai{
-    /* border-style: solid; */
+    border-style: solid; 
     width: 30%;
     margin-left: auto;
     margin-right: auto;
     margin-top: 1ex;
-    margin-bottom: 20%;
+    margin-bottom: 3%;
 }
 .midScore{
     width: 30%;
     font-weight: bold;
     font-size: 30px; 
-    /* border-style: solid; */
+    border-style: solid; 
     margin-left: auto;
     margin-right: auto;
+    margin-top: 13%;
     margin-bottom: 1%;
 }
-.userSign {
-    width: 100%;
+.userMsg {
     font-weight: bold;
-    margin-bottom: 20%;
+    margin-left: 4%;
+    margin-right: 4%;
+    display: inline;
 }
 .buttonContainer {
     width: 10%;
     margin-top: 1%;
-    margin-left: 15%;
-    margin-right: 15%;
+    margin-left: 19%;
+    margin-right: 19%;
 }
 </style>

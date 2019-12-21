@@ -2,14 +2,14 @@
 <template>
   <div id="app">
     <Layout>
-      <Header style="top:0; height:10ex; width:100%;position:fixed; background-color:#274163">
+      <Header style="top:0; height:8ex; width:100%;position:fixed; background-color:#274163">
         {{title}}
       </Header>
-      <Content style="margin-top:10ex; background-color:white;" >
+      <Content style="margin-top:8ex; background-color:white;" >
         <router-view/>
       </Content>
-      <Footer style="bottom:0;height:18ex;width:100%; position:fixed;padding:0%">
-        <img src="./assets/BottomLogo.png" width="360" height="144" />
+      <Footer style="bottom:0;height:12ex;width:100%; position:fixed;padding:0%">
+        <img src="./assets/BottomLogo.png" width="240" height="96" />
       </Footer>
     </Layout>
   </div>

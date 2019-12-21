@@ -215,11 +215,10 @@ export default{
 <style>
 	.outcards {
       width: 100%;
-      /* margin-top: 60px; */
-      
     }
 	.handcards {
-	margin-top: 80px;
+	margin-top: 60px;
+	margin-bottom: 25px;
     display: inline-block;
     }
 </style>
