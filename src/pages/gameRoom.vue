@@ -43,6 +43,9 @@
             <div class="topContainer">
                 <div class="dipai">
                     当前底牌：
+                    <OutCards
+                    :aOutCards="baseCard">
+                    </OutCards>
                 </div>
                 <div class="midScore">
                     {{midScore}}
@@ -64,7 +67,7 @@
                 <!-- 退出 -->
                 <Button class="buttonContainer" @click="leaveRoom" v-if="readyTime" type="error">Exit</Button>
                 <!-- 不要 -->
-                <Button class="buttonContainer" @click="pass" v-if="cardTime" type="error">Pass</Button>
+                <Button class="buttonContainer" @click="pass" v-if="cardTime" :disabled="cantPass" type="error">Pass</Button>
                 <!-- 不叫 -->
                 <Button class="buttonContainer" @click="doNotCallLord" v-if="callLordTime" type="error">never mind</Button>
                 <!-- 不抢 -->
@@ -118,7 +121,7 @@ export default {
     name: 'GameRoom',
     data() {
         return{
-            userIds:['','',''],
+            userIds:['','','',''],
             BOutCards:"",
             BNoOut:0,
             BCallLandLord:0,
@@ -130,10 +133,11 @@ export default {
             callLordSeat: -1,
             snatchLordSeat:-1,
             nBankerSeat:-1,
-            nSelfSelectCasrdsType: 0,    //自己选中的牌的牌型
-            nSelfSelectCasrdsPower: 0,   //自己选中的牌的大小
+            nSelfSelectCardsType: 0,    //自己选中的牌的牌型
+            nSelfSelectCardsPower: 0,   //自己选中的牌的大小
             bAvailOutCards: false,       //自己选中的牌能不能出
             aSelfAvailCards: [],         //推荐的出牌
+            baseCard: [],
 
             //上一次的出牌信息
             oLastOut: {
@@ -143,7 +147,7 @@ export default {
                 nType: 0
             },
 
-            nSelfSeat: this.$store.state.seat,
+            nSelfSeat: 0,
             midScore:'',
             ReadyText: "Ready",
             readyTime: true,
@@ -169,9 +173,22 @@ export default {
         OutCards
     },
     computed:{
-
+        cantPass(){
+            if(this.oLastOut.nSeat==this.nSelfSeat){
+                return true
+            }else if(this.nBankerSeat==this.nSelfSeat && this.oLastOut.nSeat==-1){
+                return true
+            }
+            else{
+                return false
+            }
+        }
     },
     methods: {
+        // 游戏结束
+        showResult(){
+
+        },
         // 判断一个位置与自己的关系 0:自己 1：下家 2：上家
         judgeRelation(seat){
             var dis = seat-this.nSelfSeat;
@@ -195,10 +212,38 @@ export default {
             }
             return cardArray
         },
+        objectToObject(objectArray){
+            for(let object of objectArray){
+                object.value += 1
+            }
+            return objectArray
+        },
         // 提示
         help(){
             let aCards = CardHelper.fGetHintCards();
             this.handleChangeSelectCards(aCards);
+        },
+        // 获得某人的Id
+        getId(rel){
+            if(rel==1){
+                var seat = this.nSelfSeat + 1;
+                if(seat<=3){
+                    return this.userIds[seat]
+                }else{
+                    return this.userIds[1]
+                }
+            }
+            else if(rel==2){
+                var seat = this.nSelfSeat - 1
+                if(seat>0){
+                    return this.userIds[seat]
+                }else{
+                    return this.userIds[3]
+                }
+            }
+            else{
+                return 0
+            }
         },
         // 更新自己的手牌
         renewACards(SelfOutCards = []){
@@ -211,71 +256,15 @@ export default {
                 }
             }
             this.aSelfCards = tmpACards;
-            this.aSelectedCards = [];
+            this.aSelfSelectCards = [];
         },
         // 变更手牌
         changeaCards(){
             // this.aCards = [2,3,4]
-            var json = {
-                "seat":"2",
-                "cards":[
-                    {
-                        "value":0
-                    },
-                    {
-                        "value":1
-                    },
-                    {
-                        "value":2
-                    },
-                    {
-                        "value":3
-                    },
-                    {
-                        "value":4
-                    },
-                    {
-                        "value":5
-                    },
-                    {
-                        "value":6
-                    },
-                    {
-                        "value":7
-                    },
-                    {
-                        "value":8
-                    },
-                    {
-                        "value":9
-                    },
-                    {
-                        "value":10
-                    },
-                    {
-                        "value":11
-                    },
-                    {
-                        "value":12
-                    },
-                    {
-                        "value":13
-                    },
-                    {
-                        "value":14
-                    },
-                    {
-                        "value":15
-                    },
-                    {
-                        "value":16
-                    }
-                ]
-            }
-            var cards = this.jsonToCard(json)
-            cards = CardControler.fSortHandCards(cards)
-            this.aSelfCards = cards
-            console.log("he");
+            // var cards = this.jsonToCard(json)
+            // cards = CardControler.fSortHandCards(cards)
+            // this.aSelfCards = cards
+            // console.log("he");
         },
         // 更改选中的牌
         handleChangeSelectCards(aCards = []){
@@ -286,16 +275,24 @@ export default {
         gameStart(){
             this.readyTime = false
             this.midScore = 30
+            this.ACallLandLord = 0
+            this.BCallLandLord = 0
+            this.nCallLandLord= 0
+            this.passLordTime = 0
+            this.callLordTime = false
         },
         // 准备
         setReady(){
             if(this.ReadyText=="Ready"){
-                this.myUserSignr = "Ready"
-                this.ReadyText = "Unready"
-
+                var object = {
+                    type: "ready"
+                }
+                this.socketApi.sendSock(object, this.getConfigResult)          
             }else{
-                this.myUserSign = ""
-                this.ReadyText = "Ready"
+                var object = {
+                    type: "unready"
+                }
+                this.socketApi.sendSock(object, this.getConfigResult)
             }
         },
         // 离开房间
@@ -332,11 +329,21 @@ export default {
         confirmCard(){
             var aSelectedCards = CardControler.fSortOutCards(this.aSelfSelectCards);
             var oSelectedCards = this.ArrayToObject(aSelectedCards);
-            this.Selfchupai(oSelectedCards)
+            this.cardTime = false
+            // this.Selfchupai(oSelectedCards)
+            var object = {
+                type: "play",
+                cards: oSelectedCards
+            }
+            this.socketApi.sendSock(object,this.getConfigResult)
         },
         // 不出
         pass(){
-
+            var object = {
+                type: "play",
+                cards: []
+            }
+            this.socketApi.sendSock(object,this.getConfigResult)
         },
         Achupai(OutCards = []){
             this.bANoOut = 0;
@@ -356,6 +363,16 @@ export default {
             this.rightCardRemains -= aOutCards.length;
             if(this.rightCardRemains == 0){
                 console.log("自己输了");
+                var score1 = this.midScore
+                if(this.nBankerSeat == this.nSelfSeat){
+                    score1 *= 2
+                }
+                var object = {
+                    type: "gameOver",
+                    win: false,
+                    score: score1
+                }
+                this.socketApi.sendSock(object, this.getConfigResult)
             }
         },
         Bchupai(OutCards = []){
@@ -376,9 +393,20 @@ export default {
             this.leftCardRemains -= aOutCards.length;
             if(this.leftCardRemains == 0){
                 console.log("自己输了");
+                var score1 = this.midScore
+                if(this.nBankerSeat == this.nSelfSeat){
+                    score1 *= 2
+                }
+                var object = {
+                    type: "gameOver",
+                    win: false,
+                    score: score1
+                }
+                this.socketApi.sendSock(object, this.getConfigResult)
             }
             else{
                 console.log('上家出过牌，自己的出牌按钮v-if绑定的属性设置为true');
+                this.cardTime = true
             }
         },
         Selfchupai(OutCards = []){
@@ -404,7 +432,8 @@ export default {
         Bbuchu(){
             this.bBNoOut = 1;
             this.aBOut = [];
-            console.log('上家不出，自己的出牌按钮v-if绑定的属性设置为true');
+            // console.log('上家不出，自己的出牌按钮v-if绑定的属性设置为true');
+            this.cardTime = true
         },
         Selfbuchu(){
             this.bSelfNoOut = 1;
@@ -420,54 +449,76 @@ export default {
         ArrayToObject(Cards = []){
             var aCards = [];
             for(var i = 0; i < Cards.length; i++){
-                var o = { 'value': Cards[i]};
+                var o = { 'value': Cards[i] - 1};
                 aCards.push(o);
             }
             return aCards;
         },
         // 叫地主
         callLord(){
-            this.callLordSeat = 0
-            this.nCallLandLord = 1
-            this.callLordTime = false
+            var object={
+                type : "getLord"
+            }
+            this.socketApi.sendSock(object,this.getConfigResult)
         },
         // 不叫
         doNotCallLord(){
             if(this.passLordTime==2){
                 // 重新发牌，这时应值此值为0
-                this.changeaCards();
-                this.ACallLandLord = 0
-                this.BCallLandLord = 0
-                this.callLordTime = false
+                var object={
+                    type : "reDealCards"
+                }
+                this.socketApi.sendSock(object,this.getConfigResult)
             }
             else{
-                this.passLordTime+=1
-                this.nCallLandLord = 2
-                this.callLordTime = false
+                var object = {
+                    type: "passLord"
+                }
+                this.socketApi.sendSock(object,this.getConfigResult)
             }
         },
         // 抢地主
         snatchLord(){
+            var object = {
+                    type: "doubleScore",
+                    doubleRate: 2.0
+                }
+            this.socketApi.sendSock(object,this.getConfigResult)
             if(this.callLordSeat==0){
-                this.midScore*=2
-                //自己是地主
-                console.log("自己是地主")
+                var object = {
+                    type: "getBaseCards",
+                    LordId: this.$store.state.userID
+                }
+                this.socketApi.sendSock(object,this.getConfigResult)
             }
             else{
-                this.snatchLordSeat = 0;
-                this.nCallLandLord = 3;
-                this.midScore*=2
-                this.snatchLordTime = false;
+                var object = {
+                    type: "competeLord"
+                }
+                this.socketApi.sendSock(object,this.getConfigResult)
             }
         },
         // 不抢
         doNotSnatchLord(){
             if(this.callLordSeat == 1 && this.snatchLordSeat == -1){
                 //下家是地主
-                console.log("下家是地主")
+                var object = {
+                    type: "getBaseCards",
+                    LordId: this.getId(1)
+                }
+                this.socketApi.sendSock(object,this.getConfigResult)
+            }else if(this.callLordSeat == 0){
+                //上一个抢地主的是地主
+                var object = {
+                    type: "getBaseCards",
+                    LordId: this.getId(this.snatchLordSeat)
+                }
+                this.socketApi.sendSock(object,this.getConfigResult)
             }else{
-                this.nCallLandLord=4;
-                this.snatchLordTime = false;
+                var object = {
+                    type: "noSnatch"
+                }
+                this.socketApi.sendSock(object,this.getConfigResult)
             }
         },
         // 返回websocket
@@ -493,14 +544,14 @@ export default {
                     if(rel==1){
                         this.rightScore = ''
                         this.rightUserName = ''
-                        this.userIds[res.seat - 1] = ''
+                        this.userIds[res.seat] = ''
                     }
                     this.$Notice.error({
                     title:"有人离开了房间"
                 })
                 }
             }else if(res.type=="enterRoom"){
-                this.userIds[res.seat - 1] = res.userId
+                this.userIds[res.seat] = res.userId
                 console.log(this.userIds)
                 var rel = this.judgeRelation(res.seat)
                 if(rel==1){
@@ -510,28 +561,140 @@ export default {
                     this.leftUserName = res.userName
                     this.leftScore = res.score
                 }
-                this.$Notice.message({
+                this.$Notice.info({
                     title:"有人加入了房间"
                 })
             }else if(res.type=="ready"){
-
+                var seat = this.userIds.indexOf(res.userId)
+                console.log(seat)
+                var rel = this.judgeRelation(seat)
+                console.log(rel)
+                if(rel==0){
+                    this.nCallLandLord = 5
+                    this.ReadyText = "Unready"
+                }else if(rel==1){
+                    this.ACallLandLord = 5
+                }else if(rel==2){
+                    this.BCallLandLord = 5
+                }
             }else if(res.type=="unready"){
-
+                var seat = this.userIds.indexOf(res.userId)
+                console.log(seat)
+                var rel = this.judgeRelation(seat)
+                if(rel==0){
+                    this.nCallLandLord = 0
+                    this.ReadyText = "Ready"
+                }else if(rel==1){
+                    this.ACallLandLord = 0
+                }else if(rel==2){
+                    this.BCallLandLord = 0
+                }
             }else if(res.type=="dealCards"){
                 this.gameStart();
-
+                var seat = this.userIds.indexOf(res.userId)
+                var rel = this.judgeRelation(seat)
+                if(rel==0){
+                    this.callLordTime = true
+                }
+                var cards = this.jsonToCard(res.cards)
+                cards = CardControler.fSortHandCards(cards)
+                this.aSelfCards = cards
             }else if(res.type=="getLord"){
-
+                var seat = this.userIds.indexOf(res.userId)
+                var rel = this.judgeRelation(seat)
+                if(rel==0){
+                    this.callLord()
+                }else if(rel==1){
+                    this.ACall()
+                }else if(rel==2){
+                    this.BCall()
+                }
             }else if(res.type=="competeLord"){
-
+                var seat = this.userIds.indexOf(res.userId)
+                var rel = this.judgeRelation(seat)
+                if(rel==0){
+                    this.snatchLordSeat = 0;
+                    this.nCallLandLord = 3;
+                    this.midScore*=2
+                    this.snatchLordTime = false;
+                }else if(rel==1){
+                    this.ASnatch()
+                }else if(rel==2){
+                    this.BSnatch()
+                }
             }else if(res.type=="passLord"){
-
+                var seat = this.userIds.indexOf(res.userId)
+                var rel = this.judgeRelation(seat)
+                if(rel==0){
+                    this.passLordTime+=1
+                    this.nCallLandLord = 2
+                    this.callLordTime = false
+                }else if(rel==1){
+                    this.ANotCall()
+                }else if(rel==2){
+                    this.BNotCall()
+                }
+            }else if(res.type=="reDealCards"){
+                this.gameStart();
+                var seat = this.userIds.indexOf(res.userId)
+                var rel = this.judgeRelation(seat)
+                if(rel==0){
+                    this.callLordTime = true
+                }
+                var cards = this.jsonToCard(res.cards)
+                cards = CardControler.fSortHandCards(cards)
+                this.aSelfCards = cards
             }else if(res.type=="doubleScore"){
-
+                this.midScore *= 2
+            }else if(res.type=="noSnatch"){
+                var seat = this.userIds.indexOf(res.userId)
+                var rel = this.judgeRelation(seat)
+                if(rel==0){
+                    this.nCallLandLord=4;
+                    this.snatchLordTime = false;
+                }else if(rel==1){
+                    this.ANotSnatch()
+                }else if(rel==2){
+                    this.BNotSnatch()
+                }
             }else if(res.type=="getBaseCards"){
-
+                this.baseCard = this.objectToObject(res.cards)
+                var seat = this.userIds.indexOf(res.LordId)
+                var rel = this.judgeRelation(seat)
+                this.nBankerSeat = rel
+                this.getLandLord(rel)
+                if(rel==0){
+                    var SelfCards = this.aSelfCards;
+                    SelfCards = SelfCards.concat(this.jsonToCard(this.baseCard));
+                    SelfCards = CardControler.fSortHandCards(SelfCards);
+                    this.aSelfCards = SelfCards;
+                    this.aSelfSelectCards = [];
+                }
             }else if(res.type=="play"){
-
+                var seat = this.userIds.indexOf(res.userId)
+                var rel = this.judgeRelation(seat)
+                if(res.cards.length==0){
+                    if(rel==0){
+                        this.Selfbuchu()
+                    }else if(rel==1){
+                        this.Abuchu()
+                    }else if(rel==2){
+                        this.Bbuchu()
+                    }
+                }else{
+                    var cards = this.objectToObject(res.cards)
+                    if(rel==0){
+                        this.Selfchupai(cards)
+                    }else if(rel==1){
+                        this.Achupai(cards)
+                    }else if(rel==2){
+                        this.Bchupai(cards)
+                    }
+                }
+            }else if(res.type == "getRoomInfo"){
+                for(let user of res.userInfos){
+                    this.userIds[user.seat] = user.userId      
+                }
             }
         },
         // 测试开始出牌
@@ -581,7 +744,6 @@ export default {
         ASnatch(){
             this.snatchLordSeat = 1
             this.ACallLandLord = 3
-            this.midScore*=2
         },
         // 下家不抢
         ANotSnatch(){
@@ -591,7 +753,6 @@ export default {
         BSnatch(){
             this.snatchLordSeat = 2
             this.BCallLandLord = 3
-            this.midScore*=2
             this.snatchLordTime = true
         },
         // 上家不抢
@@ -620,13 +781,14 @@ export default {
                 // 自己成为地主时获取提示
                 this.aSelfAvailCards = CardHelper.fGetAvailCards(this.aSelfCards, 0, 0, 0);
                 console.log("成为地主，自己的出牌按钮v-if绑定的属性设置为true");
+                this.cardTime = true
             }
         },
         'aSelfSelectCards'(aCards) {
             let nPower = CardControler.fGetCardsPower(aCards);
             let nType = CardControler.fGetCardsType(aCards);
-            this.nSelfSelectCasrdsType = nType;
-            this.nSelfSelectCasrdsPower = nPower;
+            this.nSelfSelectCardsType = nType;
+            this.nSelfSelectCardsPower = nPower;
             // 处理按钮
             let nCount = aCards.length;
             let oLastOut = this.oLastOut;
@@ -663,17 +825,26 @@ export default {
         'aSelfCards'(aCards){
             if(aCards.length == 0){
                 console.log("自己胜利");
+                var score1 = this.midScore
+                if(this.nBankerSeat == this.nSelfSeat){
+                    score1 *= 2
+                }
+                var object = {
+                    type: "gameOver",
+                    win: true,
+                    score: score1
+                }
+                this.socketApi.sendSock(object, this.getConfigResult)
             }
-        }
+        },
     },
     mounted(){
         // --------------------------------------测试用---------------------------------------------------
-        this.nSelfSeat = this.$store.state.seat
         console.log(this.nSelfSeat)
-        this.userIds[this.nSelfSeat - 1] = this.$store.state.userID
+        this.userIds[this.$store.state.seat] = this.$store.state.userID
         console.log(this.userIds)
         var object = {
-            type: "emptyResponse",
+            type: "getRoomInfo",
         }
         this.socketApi.sendSock(object, this.getConfigResult)
     }

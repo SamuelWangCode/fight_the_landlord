@@ -80,7 +80,7 @@ export default {
               this.$Notice.success({
                   title: "Create Room Success!"
                 })
-              setTimeout(1000)
+            //   setTimeout(1000)
               this.$router.push("/gameRoom")
           }else if(res.status=="error"){
               console.log("没创成功")

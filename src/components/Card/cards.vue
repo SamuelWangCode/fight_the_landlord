@@ -95,7 +95,7 @@ export default{
 	},
 	filters:{
 		ftCallLandlord(nCall){
-			let aStr=['', '叫地主', '不叫', '抢地主', '不抢']
+			let aStr=['', '叫地主', '不叫', '抢地主', '不抢','准备']
 			return aStr[nCall]
 		},
 	},

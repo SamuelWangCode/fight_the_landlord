@@ -229,7 +229,23 @@ export default {
     },
     computed: {
     },
+    mounted(){
+        var object = [{
+            value: 2
+        },{
+            value : 3
+        }
+        ]
+        object = this.objectToObject(object)
+        console.log(object)
+    },
     methods:{
+        objectToObject(objectArray){
+            for(let object of objectArray){
+                object.value += 1
+            }
+            return objectArray
+        },
         changeaCards(){
             this.aSelfCards = [1,2,3,4,5,6,7,8,33];
             console.log("模拟发牌");
