@@ -56,6 +56,7 @@ var CardHelper = {
     , '4': []
     };
     // 小于10的单牌优先出
+    //处理oCardVal 和 aCardsVal
     for (var i = 0; i < aOriCards.length; i++) {
       var nCard = aOriCards[i];
       var nCardVal = self.fGetCardVal(nCard);
@@ -63,6 +64,7 @@ var CardHelper = {
       oCardVal[nCardVal].push(nCard);
       aCardVal.indexOf(nCardVal) < 0 && aCardVal.push(nCardVal);
     }
+    //处理oCardNum
     for (var i = 0; i < aCardVal.length; i++) {
       var nCardVal = aCardVal[i];
       var aCards = oCardVal[nCardVal];
@@ -197,20 +199,18 @@ var CardHelper = {
     }
     return aRet;
   }
-, fGetCardVal: function(nCard) {
-    var a = nCard;
-    var ans = a % 13 === 0? 13: a % 13;
-    if (a >= 53) {
-      ans = a - 31;
+, fGetCardVal: function(cardId) {
+    var nCardVal = parseInt((cardId - 1) / 4) + 1;
+    if (cardId >= 53) {
+      nCardVal = cardId - 31;
     }
-    // A牌2牌
-    if (ans === 1) {
-      ans = 14;
+    if (nCardVal == 1) {
+      nCardVal = 14;
     }
-    if(ans === 2){
-      ans = 19;
+    if (nCardVal == 2) {
+      nCardVal = 16;
     }
-    return ans;
+    return nCardVal;
   }
 , fGetOneTypeCards: function(oCardVal, aCardVal, oCardNum, nPower, nNum) {
     // 获取单种牌 1、2、3、4张

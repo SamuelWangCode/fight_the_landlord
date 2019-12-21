@@ -12,10 +12,12 @@ const store = new Vuex.Store({
         change(state, newUserID){
             console.log("VUEX changID");
             state.userID = newUserID;
+            console.log(state.userID)
         },
-        change(state, newSeat){
+        changeSeat(state, newSeat){
             console.log("VUEX changSeat");
             state.seat = newSeat;
+            console.log(state.seat)
         }
     }
 })

@@ -80,6 +80,7 @@ export default {
               this.$Notice.success({
                   title: "Create Room Success!"
                 })
+              setTimeout(1000)
               this.$router.push("/gameRoom")
           }else if(res.status=="error"){
               console.log("没创成功")
@@ -103,16 +104,23 @@ export default {
               })
           }
       }else if(res.type=="roomlist"){
-          console.log("获取房间列表")
+        //   console.log("获取房间列表")
+        //   console.log(res.list)
           var i = 0
+          if(res.list.length==0){
+              this.hasRoom = false
+          }
           while(res.list[i]){
+            //   console.log(i)
               this.hasRoom = true
               this.allRoom[i].roomNumber = res.list[i].roomId
               this.allRoom[i].playerNumber = res.list[i].userNum
               if(res.list[i].userNum == 3){
                   this.allRoom[i].joinButtonDisabled = true
               }
+              i+=1
           }
+        //   console.log("跳出循环")
       }
     }
   },
