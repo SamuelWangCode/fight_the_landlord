@@ -236,13 +236,12 @@ export default {
     methods: {
         // 游戏结束
         showResult(win, score){
+            console.log("显示游戏结果")
             if(win==true){
                 this.$Modal.success({
                     title: "You Win",
                     content: "Your score plus " + score
                 })
-                this.myScore += score
-                this
             }else{
                 this.$Modal.info({
                     title: "You Lose",
@@ -291,6 +290,7 @@ export default {
             this.leftUserSign='',
             this.rightCardRemains='',
             this.rightUserSign=''
+            this.myCardNumber=0
         },
         // 判断一个位置与自己的关系 0:自己 1：下家 2：上家
         judgeRelation(seat){
@@ -693,7 +693,7 @@ export default {
                 }else if(res.userId){
                     var rel = this.judgeRelation(res.seat)
                     if(rel==1){
-                        this.rightScore = ''
+                        this.rightScore = 0
                         this.rightUserName = ''
                         this.userIds[res.seat] = ''
                     }
@@ -896,6 +896,7 @@ export default {
             this.cardTime = false
         },
         judgeScore(winman){
+            console.log("我改分啦"+winman)
             if (winman == 1){
                 if(this.nBankerSeat == 1){
                     this.rightScore  += 2*this.midScore;
