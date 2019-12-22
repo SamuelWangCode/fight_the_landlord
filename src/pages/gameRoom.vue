@@ -3,7 +3,7 @@
 // B是上家
 <template>
     <div class="container">
-        <Button @click="changeaCards">添加手牌</Button>
+        <!-- <Button @click="changeaCards">添加手牌</Button>
         <Button @click="testPlay">测试出牌</Button>
         <Button @click="testCall">测试叫地主</Button>
         <Button @click="ACall">A叫地主</Button>
@@ -14,7 +14,7 @@
         <Button @click="ANotSnatch">A不抢</Button>
         <Button @click="BSnatch">B抢地主</Button>
         <Button @click="BNotSnatch">B不抢</Button>
-        <Button @click="changeaCards">添加手牌</Button>
+        <Button @click="changeaCards">添加手牌</Button> -->
         <div class="leftContainer">
             <div style="float:left; width:80%">
                 <img src="../assets/beimian.png" alt="扑克牌背面" class="img">
@@ -25,7 +25,7 @@
                 :bNoOut="BNoOut"
                 :nCallLandlord="BCallLandLord">
                 </outCards> -->
-                30
+                <!-- 30 -->
             </div>
             <div class="remains">
                 {{leftCardRemains}}
@@ -83,7 +83,7 @@
                 <!-- 退出 -->
                 <Button class="buttonContainer" @click="leaveRoom" v-if="readyTime" type="error">Exit</Button>
                 <!-- 不要 -->
-                <Button class="buttonContainer" @click="pass" v-if="cardTime" :disabled="cantPass" type="error">Pass</Button>
+                <Button class="buttonContainer" @click="pass" v-if="cardTime" :disabled="cantPass" type="error">{{PASSorNoOut}}</Button>
                 <!-- 不叫 -->
                 <Button class="buttonContainer" @click="doNotCallLord" v-if="callLordTime" type="error">never mind</Button>
                 <!-- 不抢 -->
@@ -112,7 +112,7 @@
                         </div>
                     </div>
                     <div style="width:6%;margin-left:auto;margin-right:auto;border-style:ridge">
-                        30
+                        <!-- 30 -->
                     </div>
                 </div>
             </div>
@@ -124,7 +124,7 @@
                 :bNoOut="ANoOut"
                 :nCallLandlord="ACallLandLord">
                 </outCards> -->
-                30
+                <!-- 30 -->
             </div>
             <div style="float:left; width:80%">
                 <img src="../assets/beimian.png" alt="扑克牌背面" class="img">
@@ -193,6 +193,7 @@ export default {
             cardTime: false,
             callLordTime: false,
             snatchLordTime: false,
+            PASSorNoOut:"PASS",
             myUserSign: '',
             aSelfSelectCards:[],
             aSelfCards : [1,2,3],
@@ -225,8 +226,60 @@ export default {
     },
     methods: {
         // 游戏结束
-        showResult(){
+        showResult(win, score){
+            if(win==true){
+                this.$Modal.success({
+                    title: "You Win",
+                    content: "Your score plus " + score
+                })
+            }else{
+                this.$Modal.info({
+                    title: "You Lose",
+                    content: "Your score minus " + score
+                })
+            }
+            this.gameStart();
+            this.readyTime = true
+            this.nBankerSeat = -1
+            this.bBNoOut = 0
+            this.bANoOut = 0
+            this.aSelfCards = []
+            this.BCallLandLord=0,
+            this.bSelfNoOut=0,
+            this.ACallLandLord=0,
+            this.nCallLandLord=0,
+            this.passLordTime=0,
+            this.callLordSeat=-1,
+            this.snatchLordSeat=-1,
+            this.nBankerSeat=-1,
+            this.nSelfSelectCardsType=0,    //自己选中的牌的牌型
+            this.nSelfSelectCardsPower=0,   //自己选中的牌的大小
+            this.bAvailOutCards=true,       //自己选中的牌能不能出
+            this.aSelfAvailCards=[],         //推荐的出牌
+            this.baseCard=[],
+            this.aAOut=[],
+            this.aBOut=[],
 
+            //上一次的出牌信息
+            this.oLastOut={
+                nSeat: 0,
+                aCards: [],
+                nPower: 0,
+                nType: 0
+            },
+
+            this.nSelfSeat=0,
+            this.midScore='',
+            this.ReadyText="Ready",
+            this.PASSorNoOut="PASS",
+            this.myUserSign='',
+            this.aSelfSelectCards=[],
+            this.aSelfCards=[1,2,3],
+            this.aSelfOut=[],
+            this.leftCardRemains='',
+            this.leftUserSign='',
+            this.rightCardRemains='',
+            this.rightUserSign=''
         },
         // 判断一个位置与自己的关系 0:自己 1：下家 2：上家
         judgeRelation(seat){
@@ -408,6 +461,7 @@ export default {
             if(this.rightCardRemains == 0){
                 console.log("自己输了");
                 var score1 = this.midScore
+                var win = false
                 if(this.nBankerSeat == this.nSelfSeat){
                     score1 *= 2
                 }
@@ -417,6 +471,7 @@ export default {
                     score: score1
                 }
                 this.socketApi.sendSock(object, this.getConfigResult)
+                this.showResult(win, score1)
             }
         },
         Bchupai(OutCards = []){
@@ -438,6 +493,7 @@ export default {
             if(this.leftCardRemains == 0){
                 console.log("自己输了");
                 var score1 = this.midScore
+                var win =  false;
                 if(this.nBankerSeat == this.nSelfSeat){
                     score1 *= 2
                 }
@@ -447,6 +503,7 @@ export default {
                     score: score1
                 }
                 this.socketApi.sendSock(object, this.getConfigResult)
+                this.showResult(win, score1)
             }
             else{
                 console.log('上家出过牌，自己的出牌按钮v-if绑定的属性设置为true');
@@ -882,6 +939,7 @@ export default {
             if(aCards.length == 0){
                 console.log("自己胜利");
                 var score1 = this.midScore
+                var win = true
                 if(this.nBankerSeat == this.nSelfSeat){
                     score1 *= 2
                 }
@@ -891,6 +949,16 @@ export default {
                     score: score1
                 }
                 this.socketApi.sendSock(object, this.getConfigResult)
+                this.showResult(win, score1)
+            }
+        },
+        'aSelfAvailCards'(aVailCards) {
+            aVailCards = aVailCards? aVailCards : [];
+            if(aVailCards.length == 0){
+                this.PASSorNoOut = "NoOut"
+            }
+            else{
+                this.PASSorNoOut = "PASS"
             }
         },
     },
