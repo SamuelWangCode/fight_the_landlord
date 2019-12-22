@@ -8,8 +8,7 @@
       <Content style="margin-top:8ex; background-color:white;" >
         <router-view/>
       </Content>
-      <Footer style="bottom:0;height:12ex;width:100%; position:fixed;padding:0%">
-        <img src="./assets/BottomLogo.png" width="240" height="96" />
+      <Footer style="bottom:0;height:0ex;width:100%; position:fixed;padding:0%">
       </Footer>
     </Layout>
   </div>
