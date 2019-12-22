@@ -1,6 +1,9 @@
 // html代码
 <template>
 <div class="formList">
+  <div style="margin-bottom:50px">
+    <img src="/static/assets/GameLogo.png" width="374px" height="140px">
+  </div>
   <Form ref="formInline" :model="formInline" :rules="ruleInline">
     <FormItem prop="user">
       <Input type="text" v-model="formInline.user" placeholder="Username" maxlength="10" @keyup.enter.native="handleSubmit('formInline')">
@@ -91,7 +94,7 @@ export default {
 // css代码
 <style scoped>
     .formList{
-        margin-top:10%;
+        margin-top:3%;
         margin-left: auto;
         margin-right: auto;
         width: 30em;
