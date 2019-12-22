@@ -7,14 +7,15 @@ Vue.use(VueAxios, axios)
 function post(url, data) {
   return axios({
     method: "POST",
-    url: "http://localhost:80/ChinesePoker_war/" + url,
+    // url: "http://localhost:80/ChinesePoker_war/" + url,
+    url: "http://169.254.239.175:80/ChinesePoker_war/" + url,
     data: data,
   })
 }
 
-function get(url) {
-  return axios.get("http://localhost:80/ChinesePoker_war/" + url);
-}
+// function get(url) {
+//   return axios.get("http://localhost:80/ChinesePoker_war/" + url);
+// }
 
 // Vue.prototype.getRecommendUsers = function(){
 //   return get("api/Recommend/getRecommendUsers");

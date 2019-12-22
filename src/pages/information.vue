@@ -1,6 +1,7 @@
 // html代码
 <template>
   <div class="informationContainer">
+    <Button @click="backToHall">return</Button>
     <div class="formList">
       <List header="self information"></List>
       <Tabs value="name1">
@@ -285,6 +286,10 @@ export default {
     });
   },
   methods: {
+    backToHall(){
+      this.socketApi.shutDownWebsocket();
+      this.$router.push("/hall")
+    },
     handleSubmit(name) {
       this.$refs[name].validate(valid => {
         if (valid) {

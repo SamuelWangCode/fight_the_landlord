@@ -2,8 +2,8 @@
 // A是下家
 // B是上家
 <template>
-    <div class="container">
-        <!-- <Button @click="changeaCards">添加手牌</Button>
+  <div class="container">
+    <!-- <Button @click="changeaCards">添加手牌</Button>
         <Button @click="testPlay">测试出牌</Button>
         <Button @click="testCall">测试叫地主</Button>
         <Button @click="ACall">A叫地主</Button>
@@ -14,136 +14,142 @@
         <Button @click="ANotSnatch">A不抢</Button>
         <Button @click="BSnatch">B抢地主</Button>
         <Button @click="BNotSnatch">B不抢</Button>
-        <Button @click="changeaCards">添加手牌</Button> -->
-        <div class="leftContainer">
-            <div style="float:left; width:80%">
-                <img src="../assets/beimian.png" alt="扑克牌背面" class="img">
-            </div>
-            <div class="timer">
-                <!-- <outCards
+    <Button @click="changeaCards">添加手牌</Button>-->
+    <div class="leftContainer">
+      <div style="float:left; width:80%">
+        <img src="../assets/beimian.png" alt="扑克牌背面" class="img" />
+      </div>
+      <div class="timer">
+        <!-- <outCards
                 :aOutCards="BOutCards"
                 :bNoOut="BNoOut"
                 :nCallLandlord="BCallLandLord">
-                </outCards> -->
-                <!-- 30 -->
-            </div>
-            <div class="remains">
-                {{leftCardRemains}}
-            </div>
-            <div class="userName">
-                {{leftUserName}}
-                lbw
-            </div>
-            <div class="score">
-                score：{{leftScore}}
-            </div>
-            <div class="userSign">
-                {{leftUserSign}}
-            </div>
+        </outCards>-->
+        <!-- 30 -->
+      </div>
+      <div class="remains">{{leftCardRemains}}</div>
+      <div class="userName">{{leftUserName}}</div>
+      <div class="score">score：{{leftScore}}</div>
+      <div class="userSign">{{leftUserSign}}</div>
+    </div>
+    <div class="centerContainer">
+      <div class="topContainer">
+        <div class="dipai">
+          当前底牌：
+          <OutCards :aOutCards="baseCard"></OutCards>
         </div>
-        <div class="centerContainer">
-            <div class="topContainer">
-                <div class="dipai">
-                    当前底牌：
-                    <OutCards
-                    :aOutCards="baseCard">
-                    </OutCards>
-                </div>
-                <div style="width:100%;height:20%;margin-top:2%;margin-bottom:2%">
-                    <div style="float:left;width:50%">
-                        <outCards
-                        :aOutCards="aBOut"
-                        :bNoOut="bBNoOut"
-                        :nCallLandlord="BCallLandLord">
-                    </outCards>
-                    </div>
-                    <div style="float:right;width:50%">
-                        <outCards
-                        :aOutCards="aAOut"
-                        :bNoOut="bANoOut"
-                        :nCallLandlord="ACallLandLord">
-                    </outCards>
-                    </div>
-                </div>
-                <div class="midScore">
-                    当前倍数：{{midScore}}
-                </div>
-            </div>
-            <div class="bottomContainer">
-                <!-- 准备 -->
-                <Button class="buttonContainer" @click="setReady" v-if="readyTime" type="primary">{{ReadyText}}</Button>
-                <!-- 出牌 -->
-                <Button class="buttonContainer" @click="confirmCard" :disabled="bAvailOutCards" v-if="cardTime" type="primary">Confirm</Button>
-                <!-- 叫地主 -->
-                <Button class="buttonContainer" @click="callLord" v-if="callLordTime" type="primary">CallLord</Button>
-                <!-- 抢地主 -->
-                <Button class="buttonContainer" @click="snatchLord" v-if="snatchLordTime" type="primary">SnatchLord</Button>
-                <!-- 提示 -->
-                <Button style="width:10%;margin-top:1%; margin-left:-10%;" @click="help" v-if="cardTime" type="primary">Help</Button>
-                <!-- 退出 -->
-                <Button class="buttonContainer" @click="leaveRoom" v-if="readyTime" type="error">Exit</Button>
-                <!-- 不要 -->
-                <Button class="buttonContainer" @click="pass" v-if="cardTime" :disabled="cantPass" type="error">{{PASSorNoOut}}</Button>
-                <!-- 不叫 -->
-                <Button class="buttonContainer" @click="doNotCallLord" v-if="callLordTime" type="error">never mind</Button>
-                <!-- 不抢 -->
-                <Button class="buttonContainer" @click="doNotSnatchLord" v-if="snatchLordTime" type="error">never mind</Button>
-                <cards
-                :aCards="aSelfCards"
-                :bNoOut="bSelfNoOut"
-                :aOutCards="aSelfOut"
-                :nCallLandlord="nCallLandLord"
-                :aSelfSelectCards="aSelfSelectCards"
-                @onChangeSelectCards="handleChangeSelectCards"
-                style="margin-bottom:20px;"
-                ></cards>
-                <div style="width:100%;margin-bottom:1%">
-                    <div style="width:40%;margin-left:2%;margin-right:2%;float:left">
-                        <div class="userMsg">
-                            DaSima
-                        </div>
-                        <div class="userMsg">
-                            Score:
-                        </div>
-                    </div>
-                    <div style="width:40%;margin-left:2%;margin-right:2%;float:right">
-                        <div class="userMsg">
-                        {{myUserSign}}
-                        </div>
-                    </div>
-                    <div style="width:6%;margin-left:auto;margin-right:auto;border-style:ridge">
-                        <!-- 30 -->
-                    </div>
-                </div>
-            </div>
+        <div style="width:100%;height:20%;margin-top:2%;margin-bottom:2%">
+          <div style="float:left;width:50%">
+            <outCards :aOutCards="aBOut" :bNoOut="bBNoOut" :nCallLandlord="BCallLandLord"></outCards>
+          </div>
+          <div style="float:right;width:50%">
+            <outCards :aOutCards="aAOut" :bNoOut="bANoOut" :nCallLandlord="ACallLandLord"></outCards>
+          </div>
         </div>
-        <div class="rightContainer">
-            <div class="timer">
-                <!-- <outCards
+        <div class="midScore">当前倍数：{{midScore}}</div>
+      </div>
+      <div class="bottomContainer">
+        <!-- 准备 -->
+        <Button
+          class="buttonContainer"
+          @click="setReady"
+          v-if="readyTime"
+          type="primary"
+        >{{ReadyText}}</Button>
+        <!-- 出牌 -->
+        <Button
+          class="buttonContainer"
+          @click="confirmCard"
+          :disabled="bAvailOutCards"
+          v-if="cardTime"
+          type="primary"
+        >Confirm</Button>
+        <!-- 叫地主 -->
+        <Button
+          class="buttonContainer"
+          @click="callLord"
+          v-if="callLordTime"
+          type="primary"
+        >CallLord</Button>
+        <!-- 抢地主 -->
+        <Button
+          class="buttonContainer"
+          @click="snatchLord"
+          v-if="snatchLordTime"
+          type="primary"
+        >SnatchLord</Button>
+        <!-- 提示 -->
+        <Button
+          style="width:10%;margin-top:1%; margin-left:-10%;"
+          @click="help"
+          v-if="cardTime"
+          type="primary"
+        >Help</Button>
+        <!-- 退出 -->
+        <Button class="buttonContainer" @click="leaveRoom" v-if="readyTime" type="error">Exit</Button>
+        <!-- 不要 -->
+        <Button
+          class="buttonContainer"
+          @click="pass"
+          v-if="cardTime"
+          :disabled="cantPass"
+          type="error"
+        >{{PASSorNoOut}}</Button>
+        <!-- 不叫 -->
+        <Button
+          class="buttonContainer"
+          @click="doNotCallLord"
+          v-if="callLordTime"
+          type="error"
+        >never mind</Button>
+        <!-- 不抢 -->
+        <Button
+          class="buttonContainer"
+          @click="doNotSnatchLord"
+          v-if="snatchLordTime"
+          type="error"
+        >never mind</Button>
+        <cards
+          :aCards="aSelfCards"
+          :bNoOut="bSelfNoOut"
+          :aOutCards="aSelfOut"
+          :nCallLandlord="nCallLandLord"
+          :aSelfSelectCards="aSelfSelectCards"
+          @onChangeSelectCards="handleChangeSelectCards"
+          style="margin-bottom:20px;"
+        ></cards>
+        <div style="width:100%;margin-bottom:1%">
+          <div style="width:40%;margin-left:2%;margin-right:2%;float:left">
+            <div class="userMsg">{{myUserName}}</div>
+            <div class="userMsg">Score:{{myScore}}</div>
+          </div>
+          <div style="width:40%;margin-left:2%;margin-right:2%;float:right">
+            <div class="userMsg">{{myUserSign}}</div>
+          </div>
+          <div style="width:6%;margin-left:auto;margin-right:auto;">
+            <!-- 30 -->
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="rightContainer">
+      <div class="timer">
+        <!-- <outCards
                 :aOutCards="AOutCards"
                 :bNoOut="ANoOut"
                 :nCallLandlord="ACallLandLord">
-                </outCards> -->
-                <!-- 30 -->
-            </div>
-            <div style="float:left; width:80%">
-                <img src="../assets/beimian.png" alt="扑克牌背面" class="img">
-            </div> 
-            <div class="remains">
-                {{rightCardRemains}}
-            </div>
-            <div class="userName">
-                {{rightUserName}}
-                PDD
-            </div>
-            <div class="score">
-                score：{{rightScore}}
-            </div>
-            <div class="userSign">
-                {{rightUserSign}}
-            </div>
-        </div>
+        </outCards>-->
+        <!-- 30 -->
+      </div>
+      <div style="float:left; width:80%">
+        <img src="../assets/beimian.png" alt="扑克牌背面" class="img" />
+      </div>
+      <div class="remains">{{rightCardRemains}}</div>
+      <div class="userName">{{rightUserName}}</div>
+      <div class="score">score：{{rightScore}}</div>
+      <div class="userSign">{{rightUserSign}}</div>
     </div>
+  </div>
 </template>
 
 // javaScript代码
@@ -160,6 +166,7 @@ export default {
         return{
             // mockCards:[29,33,37,41,45,49,1],
             userIds:['','','',''],
+            myCardNumber:0,
             bBNoOut:0,
             BCallLandLord:0,
             bANoOut:0,
@@ -198,13 +205,15 @@ export default {
             aSelfSelectCards:[],
             aSelfCards : [1,2,3],
             aSelfOut:[],
+            myUserName:'',
+            myScore: 0,
             leftCardRemains:'',
             leftUserName:'',
-            leftScore:'',
+            leftScore:0,
             leftUserSign:'',
             rightCardRemains:'',
             rightUserName:'',
-            rightScore:'',
+            rightScore:0,
             rightUserSign:''
         }
     },
@@ -232,6 +241,8 @@ export default {
                     title: "You Win",
                     content: "Your score plus " + score
                 })
+                this.myScore += score
+                this
             }else{
                 this.$Modal.info({
                     title: "You Lose",
@@ -274,7 +285,7 @@ export default {
             this.PASSorNoOut="PASS",
             this.myUserSign='',
             this.aSelfSelectCards=[],
-            this.aSelfCards=[1,2,3],
+            this.aSelfCards=[],
             this.aSelfOut=[],
             this.leftCardRemains='',
             this.leftUserSign='',
@@ -409,11 +420,13 @@ export default {
             this.callLordTime = false
             this.leftCardRemains = 17
             this.rightCardRemains = 17
+            this.myCardNumber = 17
             this.leftUserSign = "farmer"
             this.rightUserSign = "farmer"
             this.myUserSign = "farmer"
             if(seat==0){
                 this.myUserSign = "landLord"
+                this.myCardNumber = 20
             }else if(seat==1){
                 this.rightUserSign = "landLord"
                 this.rightCardRemains = 20
@@ -459,19 +472,26 @@ export default {
 
             this.rightCardRemains -= aOutCards.length;
             if(this.rightCardRemains == 0){
-                console.log("自己输了");
+                this.judgeScore(1)
+                // console.log("自己输了");
+                var win1 = false
+                if(this.nBankerSeat == 0 || this.nBankerSeat == 1){
+                    win1 = false
+                }else{
+                    win1 = true
+                }
                 var score1 = this.midScore
-                var win = false
                 if(this.nBankerSeat == this.nSelfSeat){
                     score1 *= 2
                 }
                 var object = {
                     type: "gameOver",
-                    win: false,
+                    win: win1,
                     score: score1
                 }
+                console.log(object)
                 this.socketApi.sendSock(object, this.getConfigResult)
-                this.showResult(win, score1)
+                this.showResult(win1, score1)
             }
         },
         Bchupai(OutCards = []){
@@ -491,19 +511,26 @@ export default {
 
             this.leftCardRemains -= aOutCards.length;
             if(this.leftCardRemains == 0){
-                console.log("自己输了");
+                // console.log("自己输了");
+                this.judgeScore(2)
+                var win1 =  false;
+                if(this.nBankerSeat==0||this.nBankerSeat==2){
+                    win1 = false
+                }else{
+                    win1=true
+                }
                 var score1 = this.midScore
-                var win =  false;
                 if(this.nBankerSeat == this.nSelfSeat){
                     score1 *= 2
                 }
                 var object = {
                     type: "gameOver",
-                    win: false,
+                    win: win1,
                     score: score1
                 }
+                console.log(object)
                 this.socketApi.sendSock(object, this.getConfigResult)
-                this.showResult(win, score1)
+                this.showResult(win1, score1)
             }
             else{
                 console.log('上家出过牌，自己的出牌按钮v-if绑定的属性设置为true');
@@ -525,7 +552,25 @@ export default {
                 this.midScore *= 2;
             }
             this.oLastOut = oLastOutCards;
+            this.myCardNumber -= aOutCards.length;
             this.renewACards(aOutCards);
+            if(this.myCardNumber == 0){
+                // console.log("自己胜利");
+                this.judgeScore(0)
+                var score1 = this.midScore
+                var win = true
+                if(this.nBankerSeat == this.nSelfSeat){
+                    score1 *= 2
+                }
+                var object = {
+                    type: "gameOver",
+                    win: true,
+                    score: score1
+                }
+                console.log(object)
+                this.socketApi.sendSock(object, this.getConfigResult)
+                this.showResult(win, score1)
+            }
         },
         Abuchu(){
             this.bANoOut = 1;
@@ -661,10 +706,10 @@ export default {
                 console.log(this.userIds)
                 var rel = this.judgeRelation(res.seat)
                 if(rel==1){
-                    this.rightUserName = res.userName
+                    this.rightUserName = res.name
                     this.rightScore = res.score
                 }else if (rel==2){
-                    this.leftUserName = res.userName
+                    this.leftUserName = res.name
                     this.leftScore = res.score
                 }
                 this.$Notice.info({
@@ -804,7 +849,27 @@ export default {
             }else if(res.type == "getRoomInfo"){
                 for(let user of res.userInfos){
                     console.log(user)
-                    this.userIds[user.seat] = user.userId      
+                    this.userIds[user.seat] = user.userId
+                    var rel = this.judgeRelation(user.seat)
+                    if(rel==0){
+                        this.myScore=user.score
+                        this.myUserName = user.name
+                        if(user.status=="ready"){
+                            this.nCallLandLord=5
+                        }
+                    }else if(rel==1){
+                        this.rightScore = user.score
+                        this.rightUserName = user.name
+                        if(user.status=="ready"){
+                            this.ACallLandLord=5
+                        }
+                    }else if(rel==2){
+                        this.leftUserName = user.name
+                        this.leftScore = user.score
+                        if(user.status=="ready"){
+                            this.BCallLandLord=5
+                        }
+                    }
                 }
                 console.log(this.userIds)
             }
@@ -829,6 +894,59 @@ export default {
             this.snatchLordTime = true
             this.callLordTime = false
             this.cardTime = false
+        },
+        judgeScore(winman){
+            if (winman == 1){
+                if(this.nBankerSeat == 1){
+                    this.rightScore  += 2*this.midScore;
+                    this.leftScore -=this.midScore;
+                    this.myScore -= this.midScore;
+                }
+                else if(this.nBankerSeat == 2){
+                    this.rightScore  += this.midScore;
+                    this.leftScore -= 2*this.midScore;
+                    this.myScore += this.midScore;
+                }
+                else if(this.nBankerSeat == 0){
+                    this.rightScore  += this.midScore;
+                    this.leftScore += this.midScore;
+                    this.myScore -= 2*this.midScore;
+                }
+            }
+            else if(winman == 2){
+                if(this.nBankerSeat == 1){
+                    this.rightScore  -= 2*this.midScore;
+                    this.leftScore += this.midScore;
+                    this.myScore += this.midScore;
+                }
+                else if(this.nBankerSeat == 2){
+                    this.rightScore  -= this.midScore;
+                    this.leftScore += 2*this.midScore;
+                    this.myScore -= this.midScore;
+                }
+                else if(this.nBankerSeat == 0){
+                    this.rightScore  += this.midScore;
+                    this.leftScore += this.midScore;
+                    this.myScore -= 2*this.midScore;
+                }
+            }
+            else if(winman == 0){
+                if(this.nBankerSeat == 1){
+                    this.rightScore  -= 2*this.midScore;
+                    this.leftScore += this.midScore;
+                    this.myScore += this.midScore;
+                }
+                else if(this.nBankerSeat == 2){
+                    this.rightScore  += this.midScore;
+                    this.leftScore -= 2*this.midScore;
+                    this.myScore += this.midScore;
+                }
+                else if(this.nBankerSeat == 0){
+                    this.rightScore  -= this.midScore;
+                    this.leftScore -= this.midScore;
+                    this.myScore += 2*this.midScore;
+                }
+            }
         },
         // 下家叫地主
         ACall(){
@@ -935,23 +1053,6 @@ export default {
             }
             this.bAvailOutCards = !bEnable;
         },
-        'aSelfCards'(aCards){
-            if(aCards.length == 0){
-                console.log("自己胜利");
-                var score1 = this.midScore
-                var win = true
-                if(this.nBankerSeat == this.nSelfSeat){
-                    score1 *= 2
-                }
-                var object = {
-                    type: "gameOver",
-                    win: true,
-                    score: score1
-                }
-                this.socketApi.sendSock(object, this.getConfigResult)
-                this.showResult(win, score1)
-            }
-        },
         'aSelfAvailCards'(aVailCards) {
             aVailCards = aVailCards? aVailCards : [];
             if(aVailCards.length == 0){
@@ -978,91 +1079,91 @@ export default {
 
 // css代码
 <style scoped>
-.container{
-    width: 100%;
-    height: 100%;
-    color: #475164;
-    /*background-image: url(/static/assets/GameDesk.jpg);*/
+.container {
+  width: 100%;
+  height: 100%;
+  color: #475164;
+  /*background-image: url(/static/assets/GameDesk.jpg);*/
 }
-.leftContainer{
-    width: 15%;
-    float: left;
-    height: 100%;
-    border-style: solid; 
+.leftContainer {
+  width: 15%;
+  float: left;
+  height: 100%;
+  border-style: solid;
 }
-.centerContainer{
-    width: 70%;
-    float: left;
-    height: 100%;
+.centerContainer {
+  width: 70%;
+  float: left;
+  height: 100%;
 }
-.topContainer{
-    height: 45%;
-    border-style: solid; 
+.topContainer {
+  height: 45%;
+  border-style: solid;
 }
-.bottomContainer{
-    height: 55%;
-    border-style: solid; 
+.bottomContainer {
+  height: 55%;
+  border-style: solid;
 }
-.rightContainer{
-    width: 15%;
-    float: right;
-    height: 100%;
-    border-style: solid; 
+.rightContainer {
+  width: 15%;
+  float: right;
+  height: 100%;
+  border-style: solid;
 }
-.img{
-    width: 80%;
-    margin-top: 10%;
+.img {
+  width: 80%;
+  margin-top: 10%;
 }
-.timer{
-    width: 20%;
-    float:left;
-    margin-top:30%;
-    border-style: ridge; 
+.timer {
+  width: 20%;
+  float: left;
+  margin-top: 30%;
+  /* border-style: ridge; */
 }
-.remains{
-    width: 30%;
-    height: 10%;
-    margin-top: 70%;
-    margin-left: auto;
-    margin-right: auto;
+.remains {
+  width: 30%;
+  height: 10%;
+  margin-top: 70%;
+  margin-left: auto;
+  margin-right: auto;
 }
-.userName{
-    margin-top:40%;
-    width:auto;
-    margin-left: auto;
-    margin-right: auto;
+.userName {
+  margin-top: 40%;
+  width: auto;
+  margin-left: auto;
+  margin-right: auto;
 }
-.score{
-    margin-bottom: 15%;
+.score {
+  margin-bottom: 15%;
 }
-.dipai{
-    border-style: solid; 
-    width: 30%;
-    margin-left: auto;
-    margin-right: auto;
-    margin-top: 1ex;
-    margin-bottom: 3%;
+.dipai {
+  /* border-style: solid; */
+  width: 30%;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 1ex;
+  margin-bottom: 3%;
 }
-.midScore{
-    width: 30%;
-    font-weight: bold;
-    font-size: 30px; 
-    border-style: solid; 
-    margin-left: auto;
-    margin-right: auto;
-    margin-top: 13%;
-    margin-bottom: 1%;
+.midScore {
+  width: 30%;
+  font-weight: bold;
+  font-size: 30px;
+  border-style: solid;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 13%;
+  margin-bottom: 1%;
 }
 .userMsg {
-    font-weight: bold;
-    margin-left: 4%;
-    margin-right: 4%;
-    display: inline;
+  font-weight: bold;
+  margin-left: 4%;
+  margin-right: 4%;
+  display: inline;
 }
 .buttonContainer {
-    width: 10%;
-    margin-top: 1%;
-    margin-left: 19%;
-    margin-right: 19%;
+  width: 10%;
+  margin-top: 1%;
+  margin-left: 19%;
+  margin-right: 19%;
 }
 </style>

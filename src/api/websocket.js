@@ -10,7 +10,8 @@ function initWebSocket () {
   if(user==-1){
     user = cookie.getCookie("userID")
   }
-  var ws= 'ws://localhost:80/ChinesePoker_war/ws?user=' + user;
+  // var ws= 'ws://localhost:80/ChinesePoker_war/ws?user=' + user;
+  var ws= 'ws://169.254.239.175:80/ChinesePoker_war/ws?user=' + user;
   websock = new WebSocket(ws)
   websock.onmessage = function (e) {
     websocketonmessage(e)
