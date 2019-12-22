@@ -234,6 +234,21 @@ export default {
         }
     },
     methods: {
+        AcleanOut(){
+            this.aAOut = []
+            this.bANoOut = 0
+            this.ACallLandLord = 0
+        },
+        BcleanOut(){
+            this.aBOut = []
+            this.bBNoOut = 0
+            this.BCallLandLord = 0
+        },
+        SelfcleanOut(){
+            this.aSelfOut = []
+            this.bSelfNoOut = 0
+            this.nCallLandlord = 0
+        },
         // 游戏结束
         showResult(win, score){
             console.log("显示游戏结果")
@@ -456,6 +471,7 @@ export default {
             this.socketApi.sendSock(object,this.getConfigResult)
         },
         Achupai(OutCards = []){
+            this.BcleanOut()
             this.bANoOut = 0;
             this.aAOut = OutCards;
             var aOutCards = this.ObjectToArray(OutCards);
@@ -495,6 +511,7 @@ export default {
             }
         },
         Bchupai(OutCards = []){
+            this.SelfcleanOut()
             this.bBNoOut = 0;
             this.aBOut = OutCards;
             var aOutCards = this.ObjectToArray(OutCards);
@@ -539,6 +556,7 @@ export default {
             }
         },
         Selfchupai(OutCards = []){
+            this.AcleanOut()
             console.log("自己出牌了");
             this.bSelfNoOut = 0;
             this.aSelfOut = OutCards;
@@ -575,6 +593,7 @@ export default {
         Abuchu(){
             this.bANoOut = 1;
             this.aAOut = [];
+            this.BcleanOut()
         },
         Bbuchu(){
             this.bBNoOut = 1;
@@ -582,11 +601,13 @@ export default {
             // console.log('上家不出，自己的出牌按钮v-if绑定的属性设置为true');
             this.aSelfSelectCards = []
             this.cardTime = true
+            this.SelfcleanOut()
         },
         Selfbuchu(){
             this.bSelfNoOut = 1;
             this.aSelfOut = [];
             this.cardTime = false
+            this.AcleanOut()
         },
         ObjectToArray(Cards = []){
             var aCards = [];
