@@ -697,6 +697,11 @@ export default {
                         this.rightUserName = ''
                         this.userIds[res.seat] = ''
                     }
+                    if(rel==2){
+                        this.leftScore = 0
+                        this.leftUserName = ''
+                        this.userIds[res.seat] = ''
+                    }
                     this.$Notice.error({
                     title:"有人离开了房间"
                 })
