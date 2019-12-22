@@ -45,7 +45,7 @@
               <Input v-model="detailForm.input7" readonly></Input>
             </FormItem>
             <FormItem label="game record">
-              <Button type="primary" @click="modal1 = true">show game record</Button>
+              <Button type="primary" @click="getGameInformation">show game record</Button>
             </FormItem>
           </Form>
 
@@ -203,38 +203,38 @@ export default {
         }
       ],
       data1: [
-        {
-          gameID: "12",
-          players: "hsq,wjj,yy",
-          isWin: "win",
-          sign: "lord",
-          gameTime: "2019-01-01",
-          scoreDelta: "+36"
-        },
-        {
-          gameID: "12",
-          players: "hsq,wjj,yy",
-          isWin: "win",
-          sign: "lord",
-          gameTime: "2019-01-01",
-          scoreDelta: "+36"
-        },
-        {
-          gameID: "12",
-          players: "hsq,wjj,yy",
-          isWin: "win",
-          sign: "lord",
-          gameTime: "2019-01-01",
-          scoreDelta: "+36"
-        },
-        {
-          gameID: "12",
-          players: "hsq,wjj,yy",
-          isWin: "win",
-          sign: "lord",
-          gameTime: "2019-01-01",
-          scoreDelta: "+36"
-        }
+        // {
+        //   gameID: "12",
+        //   players: "hsq,wjj,yy",
+        //   isWin: "win",
+        //   sign: "lord",
+        //   gameTime: "2019-01-01",
+        //   scoreDelta: "+36"
+        // },
+        // {
+        //   gameID: "12",
+        //   players: "hsq,wjj,yy",
+        //   isWin: "win",
+        //   sign: "lord",
+        //   gameTime: "2019-01-01",
+        //   scoreDelta: "+36"
+        // },
+        // {
+        //   gameID: "12",
+        //   players: "hsq,wjj,yy",
+        //   isWin: "win",
+        //   sign: "lord",
+        //   gameTime: "2019-01-01",
+        //   scoreDelta: "+36"
+        // },
+        // {
+        //   gameID: "12",
+        //   players: "hsq,wjj,yy",
+        //   isWin: "win",
+        //   sign: "lord",
+        //   gameTime: "2019-01-01",
+        //   scoreDelta: "+36"
+        // }
       ]
     };
   },
@@ -286,6 +286,43 @@ export default {
     });
   },
   methods: {
+    getGameInformation(){
+      this.modal1 = true
+      var data = {
+        userId : this.$store.state.userID
+      }
+      axios.getGameInfo(data).then(Response=>{
+        console.log(Response);
+        //   gameID: "12",
+        //   players: "hsq,wjj,yy",
+        //   isWin: "win",
+        //   sign: "lord",
+        //   gameTime: "2019-01-01",
+        //   scoreDelta: "+36"
+        var records = Response.data.gameRecord.gameRecords?Response.data.gameRecord.gameRecords:[]
+        var dataArray = []
+        for(let a of records){
+          var ob = {
+            gameID: a.GameId,
+            players: a.players,
+            isWin: a.win,
+            sign: a.identity,
+            gameTime: a.gameTime,
+            scoreDelta: a.score
+          }
+          dataArray.push(ob)
+        }
+        this.data1 = dataArray
+        // var object = {
+        //   gameID: ,
+        //   players: ,
+        //   isWin: ,
+        //   sign: ,
+        //   gameTime: ,
+        //   scoreDelta: 
+        // }
+      })
+    },
     backToHall(){
       this.socketApi.shutDownWebsocket();
       this.$router.push("/hall")

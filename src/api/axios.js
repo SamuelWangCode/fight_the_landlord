@@ -41,6 +41,10 @@ function getUserDetailInfo(data) {
   return post("userInfo/detail", data);
 }
 
+function getGameInfo(data) {
+  return post("gameInfo", data);
+}
+
 export default{
     login,
     register,
