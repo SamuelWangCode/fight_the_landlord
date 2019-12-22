@@ -705,6 +705,8 @@ export default {
                     this.$Notice.success({
                         title: "leave room success!"
                     })
+                    this.$store.commit("changeSeat",-1)
+                    this.$store.commit("changeRoom",-1)
                     _this.socketApi.shutDownWebsocket()
                     this.$router.push("/hall")
                 }else if(res.status =="error"){
