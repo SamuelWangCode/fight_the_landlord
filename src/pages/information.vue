@@ -204,40 +204,7 @@ export default {
           key: "scoreDelta"
         }
       ],
-      data1: [
-        // {
-        //   gameID: "12",
-        //   players: "hsq,wjj,yy",
-        //   isWin: "win",
-        //   sign: "lord",
-        //   gameTime: "2019-01-01",
-        //   scoreDelta: "+36"
-        // },
-        // {
-        //   gameID: "12",
-        //   players: "hsq,wjj,yy",
-        //   isWin: "win",
-        //   sign: "lord",
-        //   gameTime: "2019-01-01",
-        //   scoreDelta: "+36"
-        // },
-        // {
-        //   gameID: "12",
-        //   players: "hsq,wjj,yy",
-        //   isWin: "win",
-        //   sign: "lord",
-        //   gameTime: "2019-01-01",
-        //   scoreDelta: "+36"
-        // },
-        // {
-        //   gameID: "12",
-        //   players: "hsq,wjj,yy",
-        //   isWin: "win",
-        //   sign: "lord",
-        //   gameTime: "2019-01-01",
-        //   scoreDelta: "+36"
-        // }
-      ]
+      data1: []
     };
   },
   computed: {
@@ -295,18 +262,13 @@ export default {
       }
       axios.getGameInfo(data).then(Response=>{
         console.log(Response);
-        //   gameID: "12",
-        //   players: "hsq,wjj,yy",
-        //   isWin: "win",
-        //   sign: "lord",
-        //   gameTime: "2019-01-01",
-        //   scoreDelta: "+36"
-        var records = Response.data.gameRecord.gameRecords?Response.data.gameRecord.gameRecords:[]
+        var records = Response.data.gameRecord?Response.data.gameRecord:[]
         if(records.length==0){
           this.hasRecord=false
           return
         }
         else{
+          this.hasRecord = true
           var dataArray = []
           for(let a of records){
             var ob = {
@@ -320,14 +282,6 @@ export default {
             dataArray.push(ob)
           }
           this.data1 = dataArray
-          // var object = {
-          //   gameID: ,
-          //   players: ,
-          //   isWin: ,
-          //   sign: ,
-          //   gameTime: ,
-          //   scoreDelta: 
-          // }
         }
       })
     },
