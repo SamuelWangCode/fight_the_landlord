@@ -33,7 +33,7 @@ export default {
   name: "Hall",
   data() {
     return {
-    hasRoom: false,
+    hasRoom: true,
       joinRoomNumber: '',
       showModal:false,
       allRoom: [
