@@ -50,5 +50,6 @@ export default{
     register,
     changePWD,
     getUserBasicInfo,
-    getUserDetailInfo
+    getUserDetailInfo,
+    getGameInfo
 }
