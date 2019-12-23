@@ -20,7 +20,7 @@
                     <Input v-model="joinRoomNumber" placeholder="please enter the room ID"></Input>
                 </Modal>
                 </div>
-                <ListItem><Button style="primer">automatic matching</Button></ListItem>
+                <!-- <ListItem><Button style="primer">automatic matching</Button></ListItem> -->
                 <ListItem><Button style="primer" to="information">self information</Button></ListItem>
             </List>
         </div>
