@@ -3,10 +3,10 @@
     <div class="'container">
         <div class="leftContainer">
             <List header="房间列表" border>
-                <ListItem v-if="hasRoom" v-for="room in allRoom" :key="room.index">
+                <ListItem v-for="room in allRoom" :key="room.index">
                     <p style="margin-left:auto;margin-right:auto;">roomId：{{room.roomNumber}}, playerNumber: {{room.playerNumber}}     <Button type="primary" @click="enterRoomHandler(room.roomNumber)" :disabled = room.joinButtonDisabled>join the room</Button></p>
                 </ListItem>
-                <ListItem v-else>
+                <ListItem v-if="!hasRoom">
                     <p style="margin-left:auto;margin-right:auto;">No room now</p>
                 </ListItem>
             </List>
