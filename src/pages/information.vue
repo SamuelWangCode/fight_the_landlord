@@ -50,7 +50,8 @@
           </Form>
 
           <Modal v-model="modal1" title="Game Record" width="80">
-            <Table stripe :columns="columns1" :data="data1"></Table>
+            <Table stripe :columns="columns1" :data="data1" v-if="hasRecord"></Table>
+            <p v-else>No Record Now</p>
           </Modal>
         </TabPane>
         <TabPane label="change password" name="name3">
@@ -126,6 +127,7 @@ export default {
       }
     };
     return {
+      hasRecord:false,
       passwordForm: {
         oldPassword: "",
         password: "",
@@ -300,27 +302,33 @@ export default {
         //   gameTime: "2019-01-01",
         //   scoreDelta: "+36"
         var records = Response.data.gameRecord.gameRecords?Response.data.gameRecord.gameRecords:[]
-        var dataArray = []
-        for(let a of records){
-          var ob = {
-            gameID: a.GameId,
-            players: a.players,
-            isWin: a.win,
-            sign: a.identity,
-            gameTime: a.gameTime,
-            scoreDelta: a.score
-          }
-          dataArray.push(ob)
+        if(records.length==0){
+          this.hasRecord=false
+          return
         }
-        this.data1 = dataArray
-        // var object = {
-        //   gameID: ,
-        //   players: ,
-        //   isWin: ,
-        //   sign: ,
-        //   gameTime: ,
-        //   scoreDelta: 
-        // }
+        else{
+          var dataArray = []
+          for(let a of records){
+            var ob = {
+              gameID: a.GameId,
+              players: a.players,
+              isWin: a.win,
+              sign: a.identity,
+              gameTime: a.gameTime,
+              scoreDelta: a.score
+            }
+            dataArray.push(ob)
+          }
+          this.data1 = dataArray
+          // var object = {
+          //   gameID: ,
+          //   players: ,
+          //   isWin: ,
+          //   sign: ,
+          //   gameTime: ,
+          //   scoreDelta: 
+          // }
+        }
       })
     },
     backToHall(){

@@ -48,7 +48,7 @@ export default {
   methods:{
     createRoomList(objectArray){
         objectArray = objectArray ? objectArray : []
-        console.log(objectArray.length)
+        // console.log(objectArray.length)
         if(objectArray.length==0){
             this.hasRoom = false
             console.log(this.hasRoom)
@@ -137,8 +137,15 @@ export default {
       }else if(res.type=="roomlist"){
         //   console.log("获取房间列表")
         //   console.log(res.list)
-        this.allRoom = this.createRoomList(res.list)
-        console.log(this.hasRoom)
+        var list = res.list?res.list:[]
+        if(list.length==0){
+            this.hasRoom=false
+            return
+        }
+        else{
+            this.allRoom = this.createRoomList(res.list)
+        }
+        // console.log(this.hasRoom)
         //   console.log("跳出循环")
       }
     }
